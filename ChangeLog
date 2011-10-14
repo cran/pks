@@ -1,0 +1,10 @@
+Changes in 0.1-0
+
+  * initial release on CRAN
+  * Function blim() for fitting and testing basic local independence models
+  * Extractor functions for blim objects (some work automatically by
+    inheritance): simulate(), print(), logLik(), nobs(), resid(), fitted(),
+    plot(), AIC(), BIC()
+  * Conversion functions as.pattern() and as.binmat()
+  * Data sets: DoignonFalmagne7, chess, probability
+

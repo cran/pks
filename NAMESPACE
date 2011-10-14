@@ -1,0 +1,18 @@
+import(
+  "stats"
+)
+
+export(
+  "blim",
+  "blimMD",
+  "as.pattern",
+  "as.binmat"
+)
+
+S3method("print", "blim")
+S3method("logLik", "blim")
+S3method("nobs", "blim")
+S3method("residuals", "blim")
+S3method("plot", "blim")
+S3method("simulate", "blim")
+

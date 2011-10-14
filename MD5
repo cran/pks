@@ -1,0 +1,17 @@
+f1f970dd80e17ebc3ecd6000cc1ac76f *ChangeLog
+45d8db2e58edbd17454dc58f58400a47 *DESCRIPTION
+73093d84b6cbe50fd7f2ca4a0334735b *NAMESPACE
+5a594be60a339836f6b346da66039c5a *R/blim.R
+fc42d66f92a6a79da722cc955306a4c4 *R/blimMD.R
+18807206925493a41c1c5450065be434 *data/DoignonFalmagne7.rda
+475e8f14f90bbc9a532ffa29e1cac513 *data/chess.rda
+4f7b3c56d152f8154f7ac43dca0423d3 *data/probability.rda
+e1fc29296aa227161d6c68716422c921 *man/DoignonFalmagne7.Rd
+eac17ded999d84b4cb9e3a199928f59b *man/blim.Rd
+a98c02fbbb2c41496970639a4f3cf941 *man/chess.Rd
+133bc18dad897afcaa460b0ebc9ca73f *man/conversion.Rd
+710690a96bfb15f08402466b42a9574c *man/plot.blim.Rd
+1629f0d17e01426662afeec022211148 *man/print.blim.Rd
+b060ffaec3f6d46bad50f6db74e692ba *man/probability.Rd
+7339359c91c2d0ad514f31284f53d4cf *man/residuals.blim.Rd
+5ab7da0bd1167b7f64da7cd322301555 *man/simulate.blim.Rd
