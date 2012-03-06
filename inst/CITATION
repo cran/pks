@@ -1,0 +1,18 @@
+
+citEntry(entry="Misc",
+  title  = "Parameter estimation in probabilistic knowledge structures with
+            the pks package",
+  author = personList(as.person("Florian Wickelmaier"),
+                      as.person("Juergen Heller")),
+  year   = "2012",
+  note   = "Presented at the Psychoco 2012 International Workshop on
+            Psychometric Computing, February 9-10, Innsbruck, Austria",
+
+  textVersion =
+  paste("Wickelmaier, F. and Heller, J. (2012).",
+        "Parameter estimation in probabilistic knowledge structures
+         with the pks package.",
+        "Presented at the Psychoco 2012 International Workshop on
+         Psychometric Computing, February 9-10, Innsbruck, Austria."),
+  header = "Please cite the pks package by the following reference:"
+)

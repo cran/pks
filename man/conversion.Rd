@@ -8,7 +8,7 @@
   patterns or knowledge states.
 }
 \usage{
-as.pattern(R, freq = FALSE)
+as.pattern(R, freq = FALSE, as.letters = FALSE)
 
 as.binmat(N.R, uniq = TRUE, col.names = NULL)
 }
@@ -16,10 +16,12 @@ as.binmat(N.R, uniq = TRUE, col.names = NULL)
   \item{R}{an indicator matrix of response patterns or knowledge states.}
   \item{N.R}{either a (named) vector of absolute frequencies of response
     patterns, or a character vector of response patterns or knowledge states.}
-  \item{freq}{logical, should the frequency of response patterns be
+  \item{freq}{logical, should the frequencies of response patterns be
     reported?}
   \item{uniq}{logical, if \code{TRUE}, only the unique response patterns are
     returned.}
+  \item{as.letters}{logical, return reponse patterns as combinations of
+    letters.}
   \item{col.names}{column names for the state or response matrix.}
 }
 \value{
@@ -35,6 +37,7 @@ as.binmat(N.R, uniq = TRUE, col.names = NULL)
 data(DoignonFalmagne7)
 as.pattern(DoignonFalmagne7$K)
 as.pattern(DoignonFalmagne7$K, freq = TRUE)
+as.pattern(DoignonFalmagne7$K, as.letters = TRUE)
 
 dim(as.binmat(DoignonFalmagne7$N.R))
 dim(as.binmat(DoignonFalmagne7$N.R, uniq = FALSE))

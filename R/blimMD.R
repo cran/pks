@@ -12,12 +12,13 @@ blimMD <- function(K, N.R, R = as.binmat(N.R),
 
   ## Assigning state K given response R
   d.RK  <- switch(match.arg(errtype),
-             both = t(apply(R, 1, function(r) apply(K, 1, function(q)
-                      sum(xor(q, r))))),
-            error = t(apply(R, 1, function(r) apply(K, 1, function(q)
-                      if(any(q - r < 0)) NA else sum(q - r)))),
-         guessing = t(apply(R, 1, function(r) apply(K, 1, function(q)
-                      if(any(r - q < 0)) NA else sum(r - q)))))
+        both = sapply(seq_len(nstates),
+             function(q) colSums(xor(t(R), K[q,]))),
+       error = sapply(seq_len(nstates),
+             function(q) colSums(ifelse(K[q,] - t(R) < 0, NA, K[q,] - t(R)))),
+    guessing = sapply(seq_len(nstates),
+             function(q) colSums(ifelse(t(R) - K[q,] < 0, NA, t(R) - K[q,])))
+  )
   d.min <- apply(d.RK, 1, min, na.rm=TRUE)            # minimum discrepancy
 
   i.RK  <- switch(match.arg(incrule),                 # inclusion rule
@@ -48,9 +49,12 @@ blimMD <- function(K, N.R, R = as.binmat(N.R),
     eta[j]  <- sum(m.RK[which(R[,j] == 1), which(K[,j] == 0)]) /
                sum(m.RK[,which(K[,j] == 0)])
   }
+  beta[is.na(beta)] <- 0
+   eta[is.na( eta)] <- 0
+
   z <- list(discrepancy=c(disc), P.K=P.K, beta=beta, eta=eta,
     disc.tab=disc.tab, nstates=nstates, npatterns=npat, ntotal=N,
-    nerror=NA, method="MD", iter=NA, loglike=NA)
+    nerror=NA, method="MD", iter=NA, loglik=NA)
   class(z) <- "blim"
   z
 }
