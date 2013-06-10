@@ -6,7 +6,7 @@
 }
 \usage{
 \method{print}{blim}(x, P.Kshow = FALSE, errshow = TRUE,
-  digits=max(3, getOption("digits") - 2), \dots)
+      digits=max(3, getOption("digits") - 2), \dots)
 }
 \arguments{
   \item{x}{an object of class \code{blim}, typically the result of a call to

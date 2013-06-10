@@ -6,7 +6,7 @@
 }
 \usage{
 \method{plot}{blim}(x, xlab = "Predicted response probabilities",
-  ylab = "Deviance residuals", \dots)
+     ylab = "Deviance residuals", \dots)
 }
 \arguments{
   \item{x}{an object of class \code{blim}, typically the result of a
@@ -25,7 +25,7 @@ data(DoignonFalmagne7)
 blim1 <- blim(DoignonFalmagne7$K, DoignonFalmagne7$N.R, method="MD")
 blim2 <- blim(DoignonFalmagne7$K, DoignonFalmagne7$N.R, method="MDML")
 
-par(mfrow = c(1,2))                   # residuals versus fitted values
+par(mfrow = 1:2)      # residuals versus fitted values
 plot(blim1, main = "MD estimation",   ylim = c(-4, 4))
 plot(blim2, main = "MDML estimation", ylim = c(-4, 4))
 }

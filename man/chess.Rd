@@ -14,7 +14,7 @@
       knowledge structure DST1.}
     \item{\code{dst3}}{the knowledge structure DST3.}
     \item{\code{dst4}}{the knowledge structure DST4.}
-    \item{\code{N.R}}{a named numeric vector.  The names denote responses
+    \item{\code{N.R}}{a named numeric vector.  The names denote response
       patterns, the values denote their frequencies.}
   }
 }

@@ -201,7 +201,7 @@ logLik.blim <- function(object, ...){
 }
 
 
-## Number of obsevations
+## Number of observations
 nobs.blim <- function(object, ...) object$npatterns
 
 
@@ -245,16 +245,16 @@ simulate.blim <- function(object, nsim = 1, seed = NULL, ...){
      P.K <- object$P.K
     beta <- object$beta
      eta <- object$eta
-       K <- as.matrix(object$K)
-  nitems <- object$nitems
+      tK <- t(as.matrix(object$K))
        N <- object$ntotal
+  nitems <- nrow(tK)
 
   state.id <- sample(seq_along(P.K), N, replace=TRUE, prob=P.K)  # draw states
 
-  P.1.K <- K*(1 - beta) + (1 - K)*eta                # P(resp = 1 | K)
-  R     <- matrix(N * nitems, N, nitems)             # response matrix
+  P.1.K <- tK*(1 - beta) + (1 - tK)*eta               # P(resp = 1 | K)
+  R     <- matrix(N * nitems, N, nitems)              # response matrix
   for(i in seq_len(N))
-    R[i,] <- rbinom(nitems, 1, P.1.K[state.id[i],])  # draw a response
+    R[i,] <- rbinom(nitems, 1, P.1.K[, state.id[i]])  # draw a response
 
   as.pattern(R, freq = TRUE)
 }

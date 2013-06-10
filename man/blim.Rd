@@ -10,14 +10,15 @@
 }
 \usage{
 blim(K, N.R, method = c("MD", "ML", "MDML"), R = as.binmat(N.R),
-  P.K = rep(1/nstates, nstates),
-  beta = if(errequal) 0.1 else rep(0.1, nitems),
-   eta = if(errequal) 0.1 else rep(0.1, nitems),
-  errtype = c("both", "error", "guessing"),
-  errequal = FALSE, incradius = 0, tol = 1e-7, maxiter = 10000)
+     P.K = rep(1/nstates, nstates),
+     beta = if(errequal) 0.1 else rep(0.1, nitems),
+     eta = if(errequal) 0.1 else rep(0.1, nitems),
+     errtype = c("both", "error", "guessing"),
+     errequal = FALSE, incradius = 0, tol = 1e-7, maxiter = 10000)
 
 blimMD(K, N.R, R = as.binmat(N.R), errtype = c("both", "error",
-  "guessing"), incrule = c("minimum", "hypblc1", "hypblc2"), m = 1)
+       "guessing"), incrule = c("minimum", "hypblc1", "hypblc2"),
+       m = 1)
 }
 
 \arguments{
@@ -58,7 +59,7 @@ blimMD(K, N.R, R = as.binmat(N.R), errtype = c("both", "error",
   likelihood, possibly at the expense of inflating the error and guessing
   parameters.  Minimum discrepancy maximum likelihood (MDML) maximizes the
   likelihood subject to the constraint of minimum response errors.  See Heller
-  and Wickelmaier (2004) for details on the parameter estimation methods.
+  and Wickelmaier (2013) for details on the parameter estimation methods.
 
   \code{blimMD} uses minimum discrepancy estimation only.  Apart from the
   hyperbolic inclusion rules, all of its functionality is also provided by
@@ -97,12 +98,9 @@ blimMD(K, N.R, R = as.binmat(N.R), errtype = c("both", "error",
   Doignon, J.-P., & Falmagne, J.-C. (1999).
   \emph{Knowledge spaces}. Berlin: Springer.
 
-  Heller, J., & Wickelmaier, F. (2004).
-  Parameter estimation in probabilistic knowledge structures: the
-  minimum-discrepancy method.
-  Presented at the
-  \emph{35th European Mathematical Psychology Group (EMPG) Meeting}, September
-  2-4, Ghent, Belgium. 
+  Heller, J., & Wickelmaier, F. (2013).
+  Minimum discrepancy estimation in probabilistic knowledge structures.
+  \emph{Electronic Notes in Discrete Mathematics}, \bold{42}, 49--56.
 }
 
 \seealso{
