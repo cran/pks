@@ -1,12 +1,16 @@
 import(
-  "stats"
+  "stats",
+  "sets"
 )
 
 export(
   "blim",
   "blimMD",
   "as.pattern",
-  "as.binmat"
+  "as.binmat",
+  "is.forward.graded",
+  "is.backward.graded",
+  "delineate"
 )
 
 S3method("print", "blim")

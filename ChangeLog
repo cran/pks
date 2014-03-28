@@ -1,3 +1,15 @@
+Changes in 0.3-0
+
+  * New function: delineate(), knowledge structure delineated by skill
+    function
+  * New functions: is.forward.graded(), is.backward.graded()
+  * blim(): add random initial values for randinit = TRUE
+  * tests/sampling.R: add tests for uniform sampling
+  * blim(): recalculate degrees of freedom in goodness-of-fit test
+  * as.pattern(): add as.set argument; if TRUE return value is of class "set"
+  * as.binmat(): conversion from class set to matrix 
+  * DESCRIPTION: depend on package sets
+
 Changes in 0.2-1
 
   * BUG FIX: simulate.blim() made incorrect predictions

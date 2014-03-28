@@ -1,10 +1,11 @@
 ## Fitting the basic local independence model (BLIM) by MDML
 blim <- function(K, N.R, method = c("MD", "ML", "MDML"), R = as.binmat(N.R),
-  P.K = rep(1/nstates, nstates),
-  beta = if(errequal) 0.1 else rep(0.1, nitems),
-   eta = if(errequal) 0.1 else rep(0.1, nitems),
-  errtype = c("both", "error", "guessing"),
-  errequal = FALSE, incradius = 0, tol = 1e-7, maxiter = 10000) {
+                 P.K = rep(1/nstates, nstates),
+                 beta = if(errequal) 0.1 else rep(0.1, nitems),
+                  eta = if(errequal) 0.1 else rep(0.1, nitems),
+                 errtype = c("both", "error", "guessing"),
+                 errequal = FALSE, randinit = FALSE, incradius = 0,
+                 tol = 1e-7, maxiter = 10000) {
 
   K       <- as.matrix(K)
   N.R     <- setNames(as.integer(N.R), names(N.R))  # convert to named int
@@ -12,6 +13,16 @@ blim <- function(K, N.R, method = c("MD", "ML", "MDML"), R = as.binmat(N.R),
   nitems  <- ncol(K)
   npat    <- nrow(R)
   nstates <- nrow(K)
+
+  ## Uniformly random initial values
+  if (randinit) {
+      beta <- runif(nitems)                       # constraint: beta + eta < 1
+       eta <- runif(nitems)
+      beta <- ifelse(beta + eta < 1, beta, 1 - beta)
+       eta <- ifelse(beta + eta < 1,  eta, 1 -  eta)
+         x <- c(0, sort(runif(nstates - 1)), 1)
+       P.K <- x[-1] - x[-length(x)]               # constraint: sum(P.K) == 1
+  }
 
   names(P.K) <- if(is.null(rownames(K))) as.pattern(K) else rownames(K)
 
@@ -126,13 +137,12 @@ blim <- function(K, N.R, method = c("MD", "ML", "MDML"), R = as.binmat(N.R),
   loglik <- sum(log(P.R) * N.R)
 
   ## Number of parameters
-  npar <- nstates - 1 +
-    (if(errtype == "both") 2 else 1) * length(beta)
+  npar <- nstates - 1 + (if(errtype == "both") 2 else 1) * length(beta)
 
   ## Goodness of fit
   fitted <- setNames(N*P.R, names(N.R))
   G2     <- 2*sum(N.R*log(N.R/fitted), na.rm=TRUE)
-  df     <- (2^nitems - 1) - npar
+  df     <- min(2^nitems - 1, N) - npar       # number patterns or persons
   gof    <- c(G2=G2, df=df, pval = 1 - pchisq(G2, df))
 
   z <- list(discrepancy=c(disc), P.K=P.K, beta=beta, eta=eta,
@@ -261,12 +271,12 @@ simulate.blim <- function(object, nsim = 1, seed = NULL, ...){
 
 
 ## Convert binary matrix to vector of response patterns
-as.pattern <- function(R, freq = FALSE, as.letters = FALSE){
+as.pattern <- function(R, freq = FALSE, as.letters = FALSE, as.set = FALSE){
   if(freq){
     N.R <- table(apply(R, 1, paste, collapse=""))
     setNames(as.integer(N.R), names(N.R))          # convert to named int
   }else
-    if(as.letters){
+    if(as.letters | as.set){
       nitems <- ncol(R)
       item.names <- 
        make.unique(c("a", letters[(seq_len(nitems) %% 26) + 1])[-(nitems + 1)],
@@ -274,7 +284,17 @@ as.pattern <- function(R, freq = FALSE, as.letters = FALSE){
       lett <- apply(R, 1, function(r) paste(item.names[which(r == 1)],
                     collapse=""))
       lett[lett == ""] <- "0"
-      lett
+
+      if(as.set){
+        # Separate elements in lett by "_", remove leading/trailing "_",
+        # then strsplit along "_"
+        setfam <- as.set(sapply(strsplit(
+          gsub("^_(.+)_$", "\\1", gsub("([0-9]*)", "\\1_", unname(lett))),
+          "_"), as.set))
+        setfam[[set("0")]] <- set()  # proper empty set
+        setfam  # return family of sets, class set
+      }else
+        lett    # return letters, class character
     }else
       unname(apply(R, 1, paste, collapse=""))
 }
@@ -282,19 +302,25 @@ as.pattern <- function(R, freq = FALSE, as.letters = FALSE){
 
 ## Convert vector of response patterns to named binary matrix
 as.binmat <- function(N.R, uniq = TRUE, col.names = NULL){
-  pat <- if(is.null(names(N.R))) N.R else names(N.R)
-  R   <- if(uniq) strsplit(pat, "") else strsplit(rep(pat, N.R), "")
-  R   <- do.call(rbind, R)
+  if (is.set(N.R)) {
+    states <- sapply(N.R, as.character)
+    items <- sort(unique(unlist(states)))
+    R <- matrix(0, length(N.R), length(items), dimnames=list(NULL, items))
+    for (i in seq_len(nrow(R))) R[i, states[[i]]] <- 1
+  } else {
+    pat <- if(is.null(names(N.R))) N.R else names(N.R)
+    R   <- if(uniq) strsplit(pat, "") else strsplit(rep(pat, N.R), "")
+    R   <- do.call(rbind, R)
+
+    colnames(R) <- 
+      if(is.null(col.names)){
+        nitems <- ncol(R)
+        make.unique(c("a", letters[(seq_len(nitems) %% 26) + 1])[-(nitems + 1)],
+          sep="")
+      }else
+        col.names
+  }
   storage.mode(R) <- "integer"
-
-  colnames(R) <- 
-    if(is.null(col.names)){
-      nitems <- ncol(R)
-      make.unique(c("a", letters[(seq_len(nitems) %% 26) + 1])[-(nitems + 1)],
-        sep="")
-    }else
-      col.names
-
   R
 }
 

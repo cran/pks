@@ -14,7 +14,8 @@ blim(K, N.R, method = c("MD", "ML", "MDML"), R = as.binmat(N.R),
      beta = if(errequal) 0.1 else rep(0.1, nitems),
      eta = if(errequal) 0.1 else rep(0.1, nitems),
      errtype = c("both", "error", "guessing"),
-     errequal = FALSE, incradius = 0, tol = 1e-7, maxiter = 10000)
+     errequal = FALSE, randinit = FALSE, incradius = 0,
+     tol = 1e-7, maxiter = 10000)
 
 blimMD(K, N.R, R = as.binmat(N.R), errtype = c("both", "error",
        "guessing"), incrule = c("minimum", "hypblc1", "hypblc2"),
@@ -42,6 +43,8 @@ blimMD(K, N.R, R = as.binmat(N.R), errtype = c("both", "error",
     \code{both} for both error types.}
   \item{errequal}{logical, if \code{TRUE} then items have identical error
     rates.}
+  \item{randinit}{logical, if \code{TRUE} then initial parameter values are
+    sampled uniformly with constraints.  (See Details.)}
   \item{incradius}{include knowledge states of distance from the minimum
     discrepant states less than or equal to \code{incradius}.}
   \item{tol}{tolerance, stopping criterion for iteration.}
@@ -60,6 +63,17 @@ blimMD(K, N.R, R = as.binmat(N.R), errtype = c("both", "error",
   parameters.  Minimum discrepancy maximum likelihood (MDML) maximizes the
   likelihood subject to the constraint of minimum response errors.  See Heller
   and Wickelmaier (2013) for details on the parameter estimation methods.
+
+  If \code{randinit} is \code{TRUE}, initial parameter values are sampled
+  uniformly with the constraint \code{beta + eta < 1} (Weisstein, 2013) for
+  the error parameters, and with \code{sum(P.K) == 1} (Rubin, 1981) for the
+  probabilities of knowledge states. Setting \code{randinit} to \code{TRUE}
+  overrides any values given in the \code{P.K}, \code{beta}, and \code{eta}
+  arguments.
+
+  The degrees of freedom in the goodness-of-fit test are calculated as number
+  of possible response patterns minus one or number of respondents, whichever
+  is smaller, minus number of parameters.
 
   \code{blimMD} uses minimum discrepancy estimation only.  Apart from the
   hyperbolic inclusion rules, all of its functionality is also provided by
@@ -91,7 +105,8 @@ blimMD(K, N.R, R = as.binmat(N.R), errtype = c("both", "error",
   \item{fitted.values}{the fitted response frequencies.}
   \item{goodness.of.fit}{the goodness of fit statistic including the
     likelihood ratio fitted vs. saturated model (G2), the degrees of
-    freedom, and the p-value of the corresponding chi-square distribution.}
+    freedom, and the p-value of the corresponding chi-square distribution.
+    (See Details.)}
 }
 
 \references{
@@ -101,6 +116,14 @@ blimMD(K, N.R, R = as.binmat(N.R), errtype = c("both", "error",
   Heller, J., & Wickelmaier, F. (2013).
   Minimum discrepancy estimation in probabilistic knowledge structures.
   \emph{Electronic Notes in Discrete Mathematics}, \bold{42}, 49--56.
+
+  Rubin, D.B. (1981). The Bayesian bootstrap.
+  \emph{The Annals of Statistics}, \bold{9}, 130--134.
+
+  Weisstein, E.W. (2013, August 29). Triangle point picking.
+  In \emph{MathWorld -- A Wolfram Web Resource}.
+  Retrieved from
+  http://mathworld.wolfram.com/TrianglePointPicking.html.
 }
 
 \seealso{
@@ -114,8 +137,8 @@ K   <- DoignonFalmagne7$K    # knowledge structure
 N.R <- DoignonFalmagne7$N.R  # frequencies of response patterns
 
 ## Fit basic local independence model (BLIM) by different methods
-blim(K, N.R, method="MD")    # minimum discrepancy estimation
-blim(K, N.R, method="ML")    # maximum likelihood estimation by EM algorithm
-blim(K, N.R, method="MDML")  # MDML estimation
+blim(K, N.R, method = "MD")    # minimum discrepancy estimation
+blim(K, N.R, method = "ML")    # maximum likelihood estimation by EM algorithm
+blim(K, N.R, method = "MDML")  # MDML estimation
 }
 \keyword{models}
