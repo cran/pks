@@ -5,12 +5,12 @@
   Computes the knowledge structure delineated by a skill function.
 }
 \usage{
-delineate(skillfun, itemID = "item")
+delineate(skillfun, itemID = 1)
 }
 \arguments{
   \item{skillfun}{a data frame or a matrix representing the skill function.
     It consists of an item indicator and a problem-by-skill indicator matrix.}
-  \item{itemID}{name of the column in \code{skillfun} that holds the item
+  \item{itemID}{index of the column in \code{skillfun} that holds the item
     indicator.}
 }
 

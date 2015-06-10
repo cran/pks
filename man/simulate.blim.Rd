@@ -26,7 +26,7 @@
   A named vector of frequencies of response patterns.
 }
 \seealso{
-  \code{\link{blim}}.
+  \code{\link{blim}}, \code{\link{endm}}.
 }
 \examples{
 data(DoignonFalmagne7)

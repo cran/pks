@@ -10,7 +10,8 @@ export(
   "as.binmat",
   "is.forward.graded",
   "is.backward.graded",
-  "delineate"
+  "delineate",
+  "jacobian"
 )
 
 S3method("print", "blim")

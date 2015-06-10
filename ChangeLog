@@ -1,3 +1,13 @@
+Changes in 0.3-1
+
+  * BUG FIX: delineate() could return wrong knowledge structure when skillfun
+    had numeric itemIDs (or factor itemIDs in non-alphabetic order)
+  * New function: jacobian(), Jacobian matrix of a BLIM (draft version)
+  * delineate(): each element of classes is now a matrix; itemID is now the
+    index of the column that holds the item indicator
+  * blim(): new zeropad argument; per default, an incomplete response vector
+    is completed and padded with zeros
+
 Changes in 0.3-0
 
   * New function: delineate(), knowledge structure delineated by skill

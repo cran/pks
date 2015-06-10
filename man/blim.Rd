@@ -15,7 +15,7 @@ blim(K, N.R, method = c("MD", "ML", "MDML"), R = as.binmat(N.R),
      eta = if(errequal) 0.1 else rep(0.1, nitems),
      errtype = c("both", "error", "guessing"),
      errequal = FALSE, randinit = FALSE, incradius = 0,
-     tol = 1e-7, maxiter = 10000)
+     tol = 1e-7, maxiter = 10000, zeropad = 12)
 
 blimMD(K, N.R, R = as.binmat(N.R), errtype = c("both", "error",
        "guessing"), incrule = c("minimum", "hypblc1", "hypblc2"),
@@ -49,6 +49,8 @@ blimMD(K, N.R, R = as.binmat(N.R), errtype = c("both", "error",
     discrepant states less than or equal to \code{incradius}.}
   \item{tol}{tolerance, stopping criterion for iteration.}
   \item{maxiter}{the maximum number of iterations.}
+  \item{zeropad}{the maximum number of items for which an incomplete
+    \code{N.R} vector is completed and padded with zeros.}
   \item{incrule}{inclusion rule for knowledge states.  (See Details.)}
   \item{m}{exponent for hyperbolic inclusion rules.}
 }

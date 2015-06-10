@@ -5,7 +5,7 @@ blim <- function(K, N.R, method = c("MD", "ML", "MDML"), R = as.binmat(N.R),
                   eta = if(errequal) 0.1 else rep(0.1, nitems),
                  errtype = c("both", "error", "guessing"),
                  errequal = FALSE, randinit = FALSE, incradius = 0,
-                 tol = 1e-7, maxiter = 10000) {
+                 tol = 1e-7, maxiter = 10000, zeropad = 12) {
 
   K       <- as.matrix(K)
   N.R     <- setNames(as.integer(N.R), names(N.R))  # convert to named int
@@ -41,8 +41,6 @@ blim <- function(K, N.R, method = c("MD", "ML", "MDML"), R = as.binmat(N.R),
   }
 
   ## Assigning state K given response R
-  em    <- switch(method <- match.arg(method), MD = 0, ML = 1, MDML = 1)
-  md    <- switch(method, MD = 1, ML = 0, MDML = 1)
   d.RK  <- switch(errtype <- match.arg(errtype),
         both = sapply(seq_len(nstates),
              function(q) colSums(xor(t(R), K[q,]))),
@@ -51,17 +49,17 @@ blim <- function(K, N.R, method = c("MD", "ML", "MDML"), R = as.binmat(N.R),
     guessing = sapply(seq_len(nstates),
              function(q) colSums(ifelse(t(R) - K[q,] < 0, NA, t(R) - K[q,])))
   )
-  d.min <- apply(d.RK, 1, min, na.rm=TRUE)            # minimum discrepancy
-
+  d.min <- apply(d.RK, 1, min, na.rm=TRUE)               # minimum discrepancy
   i.RK  <- (d.RK <= (d.min + incradius)) & !is.na(d.RK)
 
   ## Minimum discrepancy distribution 
   disc.tab <- xtabs(N.R ~ d.min)
   disc     <- as.numeric(names(disc.tab)) %*% disc.tab / N
   
-  iter     <- 0
-  maxdiff  <- 2 * tol
-
+  iter    <- 0
+  maxdiff <- 2 * tol
+  em      <- switch(method <- match.arg(method), MD = 0, ML = 1, MDML = 1)
+  md      <- switch(method, MD = 1, ML = 0, MDML = 1)
   while ((maxdiff > tol) && (iter < maxiter) &&
          ((md*(1 - em) != 1) || (iter == 0))) {
     pi.old   <- P.K
@@ -118,6 +116,15 @@ blim <- function(K, N.R, method = c("MD", "ML", "MDML"), R = as.binmat(N.R),
   nerror <- c("careless error" = sum(beta * P.Kq),
                  "lucky guess" = sum( eta * (1 - P.Kq)))
 
+  ## If there are missing response patterns, create complete R and N.R
+  if(npat < 2^nitems && nitems <= zeropad) {
+    N.Rincomp <- N.R
+    R   <- expand.grid(rep(list(0:1), nitems), KEEP.OUT.ATTRS=FALSE)
+    N.R <- setNames(integer(nrow(R)), as.pattern(R)) # named int filled w/zeros
+    R   <- as.binmat(N.R)                            # named int again
+    N.R[names(N.Rincomp)] <- N.Rincomp
+  }
+
   ## Recompute predictions and likelihood
   P.R.K  <- switch(errtype,
         both = sapply(seq_len(nstates), function(q) apply(
@@ -134,15 +141,17 @@ blim <- function(K, N.R, method = c("MD", "ML", "MDML"), R = as.binmat(N.R),
              2, prod))
   )
   P.R    <- as.numeric(P.R.K %*% P.K)
-  loglik <- sum(log(P.R) * N.R)
+  if (sum(P.R) < 1) P.R <- P.R/sum(P.R)      # if no zero padding: normalize
+  loglik <- sum(log(P.R) * N.R, na.rm=TRUE)
 
   ## Number of parameters
   npar <- nstates - 1 + (if(errtype == "both") 2 else 1) * length(beta)
 
-  ## Goodness of fit
+  ## Goodness of fit, df = number of patterns or persons
   fitted <- setNames(N*P.R, names(N.R))
   G2     <- 2*sum(N.R*log(N.R/fitted), na.rm=TRUE)
-  df     <- min(2^nitems - 1, N) - npar       # number patterns or persons
+# df     <- min(2^nitems - 1, N) - npar        # number of patterns or persons
+  df     <- min(if(nitems <= zeropad) 2^nitems - 1 else npat, N) - npar
   gof    <- c(G2=G2, df=df, pval = 1 - pchisq(G2, df))
 
   z <- list(discrepancy=c(disc), P.K=P.K, beta=beta, eta=eta,
@@ -262,7 +271,7 @@ simulate.blim <- function(object, nsim = 1, seed = NULL, ...){
   state.id <- sample(seq_along(P.K), N, replace=TRUE, prob=P.K)  # draw states
 
   P.1.K <- tK*(1 - beta) + (1 - tK)*eta               # P(resp = 1 | K)
-  R     <- matrix(N * nitems, N, nitems)              # response matrix
+  R     <- matrix(0, N, nitems)                       # response matrix
   for(i in seq_len(N))
     R[i,] <- rbinom(nitems, 1, P.1.K[, state.id[i]])  # draw a response
 
@@ -305,7 +314,9 @@ as.binmat <- function(N.R, uniq = TRUE, col.names = NULL){
   if (is.set(N.R)) {
     states <- sapply(N.R, as.character)
     items <- sort(unique(unlist(states)))
-    R <- matrix(0, length(N.R), length(items), dimnames=list(NULL, items))
+    R <- matrix(0, length(N.R), length(items),
+                dimnames=list(NULL,
+                              if(is.null(col.names)) items else col.names))
     for (i in seq_len(nrow(R))) R[i, states[[i]]] <- 1
   } else {
     pat <- if(is.null(names(N.R))) N.R else names(N.R)
