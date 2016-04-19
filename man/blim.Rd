@@ -1,6 +1,9 @@
 \name{blim}
 \alias{blim}
 \alias{blimMD}
+\alias{anova.blim}
+\alias{coef.blim}
+\alias{deviance.blim}
 \alias{logLik.blim}
 \alias{nobs.blim}
 
@@ -11,15 +14,18 @@
 \usage{
 blim(K, N.R, method = c("MD", "ML", "MDML"), R = as.binmat(N.R),
      P.K = rep(1/nstates, nstates),
-     beta = if(errequal) 0.1 else rep(0.1, nitems),
-     eta = if(errequal) 0.1 else rep(0.1, nitems),
+     beta = rep(0.1, nitems), eta = rep(0.1, nitems),
+     betafix = rep(NA, nitems), etafix = rep(NA, nitems),
+     betaequal = NULL, etaequal = NULL,
      errtype = c("both", "error", "guessing"),
      errequal = FALSE, randinit = FALSE, incradius = 0,
-     tol = 1e-7, maxiter = 10000, zeropad = 12)
+     tol = 1e-07, maxiter = 10000, zeropad = 12)
 
 blimMD(K, N.R, R = as.binmat(N.R), errtype = c("both", "error",
        "guessing"), incrule = c("minimum", "hypblc1", "hypblc2"),
        m = 1)
+
+\method{anova}{blim}(object, \dots, test = c("Chisq", "none"))
 }
 
 \arguments{
@@ -34,15 +40,20 @@ blimMD(K, N.R, R = as.binmat(N.R), errtype = c("both", "error",
     Per default inferred from the names of \code{N.R}.}
   \item{P.K}{the vector of initial parameter values for probabilities of
     knowledge states.}
-  \item{beta}{the vector of initial parameter values for probabilities of a
-    careless error.}
-  \item{eta}{the vector of initial parameter values for probabilities of a
-    lucky guess.}
-  \item{errtype}{type of response errors that can occur: \code{error} for
-    careless errors only, \code{guessing} for lucky guesses only, and
+  \item{beta, eta}{vectors of initial parameter values for probabilities of a
+    careless error and a lucky guess, respectively.}
+  \item{betafix, etafix}{vectors of fixed error and guessing parameter values;
+    \code{NA} indicates a free parameter.}
+  \item{betaequal, etaequal}{lists of vectors of problem indices; each vector
+    represents an equivalence class: it contains the indices of problems for
+    which the error or guessing parameters are constrained to be equal.  (See
+    Examples.)}
+  \item{errtype}{deprecated, use \code{betafix} and \code{etafix}
+    instead; type of response errors that can occur: \code{error} for careless
+    errors only, \code{guessing} for lucky guesses only, and
     \code{both} for both error types.}
-  \item{errequal}{logical, if \code{TRUE} then items have identical error
-    rates.}
+  \item{errequal}{deprecated, use \code{betaequal} and \code{etaequal}
+    instead; logical, if \code{TRUE} then items have identical error rates.}
   \item{randinit}{logical, if \code{TRUE} then initial parameter values are
     sampled uniformly with constraints.  (See Details.)}
   \item{incradius}{include knowledge states of distance from the minimum
@@ -53,6 +64,11 @@ blimMD(K, N.R, R = as.binmat(N.R), errtype = c("both", "error",
     \code{N.R} vector is completed and padded with zeros.}
   \item{incrule}{inclusion rule for knowledge states.  (See Details.)}
   \item{m}{exponent for hyperbolic inclusion rules.}
+  \item{object}{an object of class \code{blim}, typically the result of a
+    call to \code{blim}.}
+  \item{test}{should the p-values of the chi-square distributions be
+    reported?}
+  \item{\dots}{additional arguments passed to other methods.}
 }
 
 \details{
@@ -84,14 +100,15 @@ blimMD(K, N.R, R = as.binmat(N.R), errtype = c("both", "error",
 
 \value{
   An object of class \code{blim} having the following components:
-  \item{discrepancy}{the mean discrepancy.}
+  \item{discrepancy}{the mean minimum discrepancy between response patterns
+    and knowledge states.}
   \item{P.K}{the vector of estimated parameter values for probabilities of
     knowledge states.}
   \item{beta}{the vector of estimated parameter values for probabilities of
     a careless error.}
   \item{eta}{the vector of estimated parameter values for probabilities of a
     lucky guess.}
-  \item{disc.tab}{the matrix of symmetric set distances.}
+  \item{disc.tab}{the minimum discrepancy distribution.}
   \item{K}{the knowledge structure.}
   \item{N.R}{the vector of frequencies of response patterns.}
   \item{nitems}{the number of items.}
@@ -100,7 +117,6 @@ blimMD(K, N.R, R = as.binmat(N.R), errtype = c("both", "error",
   \item{ntotal}{the number of respondents.}
   \item{nerror}{the number of response errors.}
   \item{npar}{the number of parameters.}
-  \item{errtype}{the type of response errors.}
   \item{method}{the parameter estimation method.}
   \item{iter}{the number of iterations needed.}
   \item{loglik}{the log-likelihood.}
@@ -130,7 +146,10 @@ blimMD(K, N.R, R = as.binmat(N.R), errtype = c("both", "error",
 
 \seealso{
   \code{\link{simulate.blim}}, \code{\link{plot.blim}},
-  \code{\link{residuals.blim}}, \code{\link{logLik.blim}}.
+  \code{\link{residuals.blim}}, \code{\link{logLik.blim}},
+  \code{\link{simulate.blim}}, \code{\link{delineate}},
+  \code{\link{jacobian}}, \code{\link{endm}}, \code{\link{probability}},
+  \code{\link{chess}}.
 }
 
 \examples{
@@ -140,7 +159,17 @@ N.R <- DoignonFalmagne7$N.R  # frequencies of response patterns
 
 ## Fit basic local independence model (BLIM) by different methods
 blim(K, N.R, method = "MD")    # minimum discrepancy estimation
-blim(K, N.R, method = "ML")    # maximum likelihood estimation by EM algorithm
+blim(K, N.R, method = "ML")    # maximum likelihood estimation by EM
 blim(K, N.R, method = "MDML")  # MDML estimation
+
+## Parameter restrictions: beta_a = beta_b = beta_d, beta_c = beta_e
+##                          eta_a =  eta_b = 0.1
+m1 <- blim(K, N.R, method = "ML",
+           betaequal = list(c(1, 2, 4), c(3, 5)),
+              etafix = c(0.1, 0.1, NA, NA, NA))
+m2 <- blim(K, N.R, method = "ML")
+anova(m1, m2)
+
+## See ?endm, ?probability, and ?chess for further examples.
 }
 \keyword{models}

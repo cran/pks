@@ -1,3 +1,14 @@
+Changes in 0.4-0
+
+  * blim(): more flexible infrastructure for setting parameter constraints;
+    errequal and errtype arguments are now deprecated in favor of
+    betaequal/etaequal and betafix/etafix
+  * New functions: anova.blim(), coef.blim(), deviance.blim()
+  * as.pattern(..., as.set = TRUE), as.binmat(): work in more cases including
+    when R or N.R do not contain the empty set
+  * chess and probability data sets: extended examples
+  * NAMESPACE: import graphics
+
 Changes in 0.3-1
 
   * BUG FIX: delineate() could return wrong knowledge structure when skillfun

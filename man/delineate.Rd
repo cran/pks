@@ -40,6 +40,7 @@ delineate(skillfun, itemID = 1)
 \seealso{
   \code{\link{blim}}.
 }
+
 \examples{
 # Skill function
 # mu(e) = {{s, t}, {s, u}},  mu(f) = {{u}}
@@ -54,5 +55,7 @@ item s t u
    h 0 1 0
 ")
 delineate(sf)
+
+## See ?probability for further examples.
 }
 \keyword{models}

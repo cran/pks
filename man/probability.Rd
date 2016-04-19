@@ -10,9 +10,14 @@
   (p101, ..., p112) or they responded too quickly or too slowly.  Based on
   similar criteria, further participants were excluded for the second set of
   problems, indicated by missing values in the variables b201, ..., b212.
-  Problems were presented in random order.  Participants were randomized to
-  two conditions: an enhanced learning object including instructions with
-  examples and a basic learning object without examples.
+  Problems were presented in random order.
+
+  Participants were randomized to two conditions: an enhanced learning object
+  including instructions with examples and a basic learning object without
+  examples.  Instructions were given on four concepts: how to calculate the
+  classic probability of an event (pb), the probability of the complement of
+  an event (cp), of the union of two disjoint events (un), and of two
+  independent events (id).
 
   The questionnaire was organized as follows:
   \describe{
@@ -168,6 +173,46 @@
 \examples{
 data(probability)
 
-dim(probability[!is.na(probability$b201),])  # "completers" only
+## "Completer" sample
+pb <- probability[!is.na(probability$b201), ]
+
+## Response frequencies for first and second part
+N.R1 <- as.pattern(pb[, sprintf("b1\%.2i", 1:12)], freq = TRUE)
+N.R2 <- as.pattern(pb[, sprintf("b2\%.2i", 1:12)], freq = TRUE)
+
+## Conjunctive skill function, one-to-one problem function
+sf1 <- read.table(header = TRUE, text = "
+  item cp id pb un
+     1  0  0  1  0
+     2  1  0  0  0
+     3  0  0  0  1
+     4  0  1  0  0
+     5  1  0  1  0
+     6  1  0  1  0
+     7  0  0  1  1
+     8  0  0  1  1
+     9  0  1  1  0
+    10  1  1  0  0
+    11  1  1  1  0
+    12  0  1  1  1
+")
+
+## Extended skill function
+sf2 <- rbind(sf1, read.table(header = TRUE, text = "
+  item cp id pb un
+     2  0  0  0  1
+     3  1  0  0  0
+     6  0  0  1  1
+     7  1  0  1  0
+    12  1  1  1  0
+"))
+
+## Delineated knowledge structures
+K1 <- delineate(sf1)$K
+K2 <- delineate(sf2)$K
+
+## After instructions, fit of knowledge structures improves
+sapply(list(N.R1, N.R2), function(n) blim(K1, n)$discrepancy)
+sapply(list(N.R1, N.R2), function(n) blim(K2, n)$discrepancy)
 }
 \keyword{datasets}

@@ -1,7 +1,6 @@
-import(
-  "stats",
-  "sets"
-)
+import("stats")
+import("graphics")
+import("sets")
 
 export(
   "blim",
@@ -14,10 +13,13 @@ export(
   "jacobian"
 )
 
-S3method("print", "blim")
+S3method("anova", "blim")
+S3method("coef", "blim")
+S3method("deviance", "blim")
 S3method("logLik", "blim")
 S3method("nobs", "blim")
 S3method("residuals", "blim")
 S3method("plot", "blim")
+S3method("print", "blim")
 S3method("simulate", "blim")
 

@@ -12,12 +12,12 @@ blimMD <- function(K, N.R, R = as.binmat(N.R),
 
   ## Assigning state K given response R
   d.RK  <- switch(match.arg(errtype),
-        both = sapply(seq_len(nstates),
-             function(q) colSums(xor(t(R), K[q,]))),
-       error = sapply(seq_len(nstates),
-             function(q) colSums(ifelse(K[q,] - t(R) < 0, NA, K[q,] - t(R)))),
-    guessing = sapply(seq_len(nstates),
-             function(q) colSums(ifelse(t(R) - K[q,] < 0, NA, t(R) - K[q,])))
+        both = apply(K, 1,
+             function(k) colSums(xor(t(R), k))),
+       error = apply(K, 1,
+             function(k) colSums(ifelse(k - t(R) < 0, NA, k - t(R)))),
+    guessing = apply(K, 1,
+             function(k) colSums(ifelse(t(R) - k < 0, NA, t(R) - k)))
   )
   d.min <- apply(d.RK, 1, min, na.rm=TRUE)            # minimum discrepancy
 

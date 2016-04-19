@@ -26,7 +26,7 @@ jacobian(object, P.K = rep(1/nstates, nstates),
 }
 
 \details{
-  To do ...
+  This is a draft version.  It may change in future releases.
 }
 
 \value{
@@ -35,8 +35,19 @@ jacobian(object, P.K = rep(1/nstates, nstates),
   model.
 }
 
+\references{
+  Heller, J. (2016).
+  Identifiability in probabilistic knowledge structures.
+  Manuscript under revision.
+
+  Stefanutti, L., Heller, J., Anselmi, P., & Robusto, E. (2012).
+  Assessing the local identifiability of probabilistic knowledge structures.
+  \emph{Behavior Research Methods}, \bold{44}, 1197--1211.
+}
+
 \seealso{
-  \code{\link{blim}}, \code{\link{simulate.blim}}.
+  \code{\link{blim}}, \code{\link{simulate.blim}},
+  \code{\link{gradedness}}.
 }
 
 \examples{
