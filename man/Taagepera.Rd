@@ -29,6 +29,7 @@
   Taagepera, M., Potter, F., Miller, G.E., & Lakshminarayan, K. (1997).
   Mapping students' thinking patterns by the use of knowledge space theory.
   \emph{International Journal of Science Education}, \bold{19}, 283--302.
+  \doi{10.1080/0950069970190303}
 }
 \examples{
 data(Taagepera)

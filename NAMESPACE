@@ -1,6 +1,7 @@
 import("stats")
-import("graphics")
 import("sets")
+
+importFrom("graphics", "abline", "panel.smooth", "plot")
 
 export(
   "blim",

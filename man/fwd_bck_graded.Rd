@@ -37,6 +37,7 @@ is.backward.graded(K)
   On the unidentifiability of a certain class of skill multi map based
   probabilistic knowledge structures.
   \emph{Journal of Mathematical Psychology}, \bold{56}, 248--255.
+  \doi{10.1016/j.jmp.2012.05.001}
 }
 
 \seealso{

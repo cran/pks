@@ -36,13 +36,15 @@ jacobian(object, P.K = rep(1/nstates, nstates),
 }
 
 \references{
-  Heller, J. (2016).
+  Heller, J. (2017).
   Identifiability in probabilistic knowledge structures.
-  Manuscript under revision.
+  \emph{Journal of Mathematical Psychology}, \bold{77}, 46--57.
+  \doi{10.1016/j.jmp.2016.07.008}
 
   Stefanutti, L., Heller, J., Anselmi, P., & Robusto, E. (2012).
   Assessing the local identifiability of probabilistic knowledge structures.
   \emph{Behavior Research Methods}, \bold{44}, 1197--1211.
+  \doi{10.3758/s13428-012-0187-z}
 }
 
 \seealso{

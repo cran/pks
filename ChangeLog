@@ -1,3 +1,10 @@
+Changes in 0.4-1
+
+  * BUG FIX: blim(..., method = "MDML") could fail when (b)eta estimates were
+    too close to zero (reported by Martin Losert)
+  * *.Rd: add DOIs to all references
+  * DESCRIPTION: new URL
+
 Changes in 0.4-0
 
   * blim(): more flexible infrastructure for setting parameter constraints;

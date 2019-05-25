@@ -8,12 +8,13 @@ citEntry(entry="Article",
   year    = "2013",
   volume  = "42",
   pages   = "49--56",
+  doi     = "10.1016/j.endm.2013.05.145",
 
   textVersion =
   paste("Heller, J. and Wickelmaier, F. (2013).",
         "Minimum discrepancy estimation in probabilistic knowledge
          structures.",
         "Electronic Notes in Discrete Mathematics,
-         42, 49-56."),
+         42, 49-56. doi:10.1016/j.endm.2013.05.145"),
   header = "Please cite the pks package by the following reference:"
 )

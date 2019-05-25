@@ -21,6 +21,7 @@
   Heller, J., & Wickelmaier, F. (2013).
   Minimum discrepancy estimation in probabilistic knowledge structures.
   \emph{Electronic Notes in Discrete Mathematics}, \bold{42}, 49--56.
+  \doi{10.1016/j.endm.2013.05.145}
 }
 \examples{
 data(endm)

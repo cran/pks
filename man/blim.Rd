@@ -134,22 +134,23 @@ blimMD(K, N.R, R = as.binmat(N.R), errtype = c("both", "error",
   Heller, J., & Wickelmaier, F. (2013).
   Minimum discrepancy estimation in probabilistic knowledge structures.
   \emph{Electronic Notes in Discrete Mathematics}, \bold{42}, 49--56.
+  \doi{10.1016/j.endm.2013.05.145}
 
   Rubin, D.B. (1981). The Bayesian bootstrap.
   \emph{The Annals of Statistics}, \bold{9}, 130--134.
+  \doi{10.1214/aos/1176345338}
 
   Weisstein, E.W. (2013, August 29). Triangle point picking.
   In \emph{MathWorld -- A Wolfram Web Resource}.
   Retrieved from
-  http://mathworld.wolfram.com/TrianglePointPicking.html.
+  \url{http://mathworld.wolfram.com/TrianglePointPicking.html}.
 }
 
 \seealso{
   \code{\link{simulate.blim}}, \code{\link{plot.blim}},
   \code{\link{residuals.blim}}, \code{\link{logLik.blim}},
-  \code{\link{simulate.blim}}, \code{\link{delineate}},
-  \code{\link{jacobian}}, \code{\link{endm}}, \code{\link{probability}},
-  \code{\link{chess}}.
+  \code{\link{delineate}}, \code{\link{jacobian}}, \code{\link{endm}},
+  \code{\link{probability}}, \code{\link{chess}}.
 }
 
 \examples{

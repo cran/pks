@@ -76,6 +76,7 @@ blim <- function(K, N.R, method = c("MD", "ML", "MDML"), R = as.binmat(N.R),
   disc.tab <- xtabs(N.R ~ d.min)
   disc     <- as.numeric(names(disc.tab)) %*% disc.tab / N
 
+  eps     <- 1e-06
   iter    <- 0
   maxdiff <- 2 * tol
   em      <- switch(method <- match.arg(method), MD = 0, ML = 1, MDML = 1)
@@ -108,8 +109,8 @@ blim <- function(K, N.R, method = c("MD", "ML", "MDML"), R = as.binmat(N.R),
     }
     beta <- drop(betaeq %*% beta.num / betaeq %*% beta.denom)
      eta <- drop( etaeq %*%  eta.num /  etaeq %*%  eta.denom)
-    beta[is.na(beta)] <- 0
-     eta[is.na( eta)] <- 0
+    beta[is.na(beta) | beta < eps] <- eps
+     eta[is.na( eta) |  eta < eps] <- eps
     beta[!is.na(betafix)] <- betafix[!is.na(betafix)]  # reset fixed parameters
      eta[!is.na( etafix)] <-  etafix[!is.na( etafix)]
 
