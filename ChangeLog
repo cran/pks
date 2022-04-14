@@ -1,3 +1,14 @@
+Changes in 0.5-0
+
+  * blim(): use (if possible) matrix multiplication to compute the conditional
+    distribution of response patterns given knowledge state; remove deprecated
+    errequal and errtype arguments; increase default zeropad to 16
+  * New function: ita(), item tree analysis
+  * conversion.R: as.binmat() gains as.logical argument
+  * chess data: correct mistakes in dst1 and dst4; add raw data and
+    replication code
+  * *.Rd: update references
+
 Changes in 0.4-1
 
   * BUG FIX: blim(..., method = "MDML") could fail when (b)eta estimates were

@@ -17,13 +17,12 @@ blim(K, N.R, method = c("MD", "ML", "MDML"), R = as.binmat(N.R),
      beta = rep(0.1, nitems), eta = rep(0.1, nitems),
      betafix = rep(NA, nitems), etafix = rep(NA, nitems),
      betaequal = NULL, etaequal = NULL,
-     errtype = c("both", "error", "guessing"),
-     errequal = FALSE, randinit = FALSE, incradius = 0,
-     tol = 1e-07, maxiter = 10000, zeropad = 12)
+     randinit = FALSE, incradius = 0,
+     tol = 1e-07, maxiter = 10000, zeropad = 16)
 
-blimMD(K, N.R, R = as.binmat(N.R), errtype = c("both", "error",
-       "guessing"), incrule = c("minimum", "hypblc1", "hypblc2"),
-       m = 1)
+blimMD(K, N.R, R = as.binmat(N.R),
+       betafix = rep(NA, nitems), etafix = rep(NA, nitems),
+       incrule = c("minimum", "hypblc1", "hypblc2"), m = 1)
 
 \method{anova}{blim}(object, \dots, test = c("Chisq", "none"))
 }
@@ -48,12 +47,6 @@ blimMD(K, N.R, R = as.binmat(N.R), errtype = c("both", "error",
     represents an equivalence class: it contains the indices of problems for
     which the error or guessing parameters are constrained to be equal.  (See
     Examples.)}
-  \item{errtype}{deprecated, use \code{betafix} and \code{etafix}
-    instead; type of response errors that can occur: \code{error} for careless
-    errors only, \code{guessing} for lucky guesses only, and
-    \code{both} for both error types.}
-  \item{errequal}{deprecated, use \code{betaequal} and \code{etaequal}
-    instead; logical, if \code{TRUE} then items have identical error rates.}
   \item{randinit}{logical, if \code{TRUE} then initial parameter values are
     sampled uniformly with constraints.  (See Details.)}
   \item{incradius}{include knowledge states of distance from the minimum
@@ -137,13 +130,13 @@ blimMD(K, N.R, R = as.binmat(N.R), errtype = c("both", "error",
   \doi{10.1016/j.endm.2013.05.145}
 
   Rubin, D.B. (1981). The Bayesian bootstrap.
-  \emph{The Annals of Statistics}, \bold{9}, 130--134.
+  \emph{The Annals of Statistics}, \bold{9}(1), 130--134.
   \doi{10.1214/aos/1176345338}
 
   Weisstein, E.W. (2013, August 29). Triangle point picking.
   In \emph{MathWorld -- A Wolfram Web Resource}.
   Retrieved from
-  \url{http://mathworld.wolfram.com/TrianglePointPicking.html}.
+  \url{https://mathworld.wolfram.com/TrianglePointPicking.html}.
 }
 
 \seealso{

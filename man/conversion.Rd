@@ -10,7 +10,7 @@
 \usage{
 as.pattern(R, freq = FALSE, as.letters = FALSE, as.set = FALSE)
 
-as.binmat(N.R, uniq = TRUE, col.names = NULL)
+as.binmat(N.R, uniq = TRUE, col.names = NULL, as.logical = FALSE)
 }
 \arguments{
   \item{R}{an indicator matrix of response patterns or knowledge states.}
@@ -25,13 +25,15 @@ as.binmat(N.R, uniq = TRUE, col.names = NULL)
     letters.}
   \item{as.set}{logical, return response patterns as set of sets.}
   \item{col.names}{column names for the state or response matrix.}
+  \item{as.logical}{logical, return logical matrix of states.}
 }
 \value{
   \code{as.pattern} returns a vector of integers named by the response
   patterns if \code{freq} is \code{TRUE}, else a character vector. If
   \code{as.set} is \code{TRUE}, the return value is of class \code{set}.
 
-  \code{as.binmat} returns an indicator matrix.
+  \code{as.binmat} returns an indicator matrix. If \code{as.logical} is
+  \code{TRUE}, it returns a logical matrix.
 }
 \seealso{
   \code{\link{blim}}, \code{set} in package \code{sets}.
@@ -49,5 +51,6 @@ dim(as.binmat(DoignonFalmagne7$N.R, uniq = FALSE))
 ## Knowledge structure as binary matrix
 as.binmat(c("000", "100", "101", "111"))
 as.binmat(set(set(), set("a"), set("a", "c"), set("a", "b", "c")))
+as.binmat(c("000", "100", "101", "111"), as.logical = TRUE)
 }
 \keyword{models}

@@ -8,7 +8,7 @@
 \usage{
 jacobian(object, P.K = rep(1/nstates, nstates),
          beta = rep(0.1, nitems), eta = rep(0.1, nitems),
-         errtype = c("both", "error", "guessing"))
+         betafix = rep(NA, nitems), etafix = rep(NA, nitems))
 }
 
 \arguments{
@@ -20,9 +20,8 @@ jacobian(object, P.K = rep(1/nstates, nstates),
     error.}
   \item{eta}{the vector of parameter values for probabilities of a lucky
     guess.}
-  \item{errtype}{type of response errors that can occur: \code{error} for
-    careless errors only, \code{guessing} for lucky guesses only, and
-    \code{both} for both error types.}
+  \item{betafix, etafix}{vectors of fixed error and guessing parameter values;
+    \code{NA} indicates a free parameter.}
 }
 
 \details{
@@ -43,7 +42,7 @@ jacobian(object, P.K = rep(1/nstates, nstates),
 
   Stefanutti, L., Heller, J., Anselmi, P., & Robusto, E. (2012).
   Assessing the local identifiability of probabilistic knowledge structures.
-  \emph{Behavior Research Methods}, \bold{44}, 1197--1211.
+  \emph{Behavior Research Methods}, \bold{44}(4), 1197--1211.
   \doi{10.3758/s13428-012-0187-z}
 }
 
@@ -54,10 +53,10 @@ jacobian(object, P.K = rep(1/nstates, nstates),
 
 \examples{
 data(endm)
-blim1 <- blim(endm$K2, endm$N.R)
+m <- blim(endm$K2, endm$N.R)
 
 ## Test of identifiability
-J <- jacobian(blim1)
+J <- jacobian(m)
 dim(J)
 qr(J)$rank
 }

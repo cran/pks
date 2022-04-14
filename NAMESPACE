@@ -11,7 +11,8 @@ export(
   "is.forward.graded",
   "is.backward.graded",
   "delineate",
-  "jacobian"
+  "jacobian",
+  "ita"
 )
 
 S3method("anova", "blim")
@@ -23,4 +24,5 @@ S3method("residuals", "blim")
 S3method("plot", "blim")
 S3method("print", "blim")
 S3method("simulate", "blim")
+S3method("print", "ita")
 

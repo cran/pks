@@ -36,7 +36,7 @@ is.backward.graded(K)
   Spoto, A., Stefanutti, L., & Vidotto, G. (2012).
   On the unidentifiability of a certain class of skill multi map based
   probabilistic knowledge structures.
-  \emph{Journal of Mathematical Psychology}, \bold{56}, 248--255.
+  \emph{Journal of Mathematical Psychology}, \bold{56}(4), 248--255.
   \doi{10.1016/j.jmp.2012.05.001}
 }
 

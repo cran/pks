@@ -1,6 +1,6 @@
 jacobian <- function(object, P.K = rep(1/nstates, nstates),
                      beta = rep(0.1, nitems), eta = rep(0.1, nitems),
-                     errtype = c("both", "error", "guessing"))
+                     betafix = rep(NA, nitems), etafix = rep(NA, nitems))
 {
   K <- as.matrix(object$K)
 # N <- object$ntotal
@@ -9,18 +9,18 @@ jacobian <- function(object, P.K = rep(1/nstates, nstates),
   R <- as.matrix(expand.grid(rep(list(0:1), nitems)))
   rownames(R) <- as.pattern(R)
   npatterns <- nrow(R)
-  P.R.K <- switch(match.arg(errtype),
-      both = t(apply(R, 1, function(r) apply(K,
-          1, function(q) prod(beta^((1 - r) * q) * (1 - beta)^(r *
-              q) * eta^(r * (1 - q)) * (1 - eta)^((1 - r) *
-              (1 - q)))))),
-      error = t(apply(R, 1, function(r) apply(K,
-          1, function(q) prod(beta^((1 - r) * q) * (1 - beta)^(r *
-              q) * 0^(r * (1 - q)) * 1^((1 - r) * (1 - q)))))),
-      guessing = t(apply(R, 1, function(r) apply(K, 1,
-              function(q) prod(0^((1 - r) * q) * 1^(r * q) *
-                eta^(r * (1 - q)) * (1 - eta)^((1 - r) * (1 -
-                q)))))))
+
+  PRKfun <- if(length(which(c(betafix, etafix) == 0))) {
+    getPRK[["apply"]] 
+  } else {
+    getPRK[["matmult"]] 
+  }
+  betanew <- beta
+   etanew <-  eta
+  betanew[!is.na(betafix)] <- betafix[!is.na(betafix)]
+   etanew[!is.na( etafix)] <-  etafix[!is.na( etafix)]
+  P.R.K <- do.call(PRKfun, list(betanew, etanew, K, R))
+
 # P.R <- as.numeric(P.R.K %*% P.K)
   K.star <- K[-nstates, ]
   R.star <- R[-npatterns, ]

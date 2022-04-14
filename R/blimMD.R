@@ -1,7 +1,7 @@
 ## Fitting BLIM by minimum discrepancy
 blimMD <- function(K, N.R, R = as.binmat(N.R),
-  errtype = c("both", "error", "guessing"),
-  incrule = c("minimum", "hypblc1", "hypblc2"), m = 1){
+                   betafix = rep(NA, nitems), etafix = rep(NA, nitems),
+                   incrule = c("minimum", "hypblc1", "hypblc2"), m = 1) {
 
   K       <- as.matrix(K)
   N.R     <- setNames(as.integer(N.R), names(N.R))  # convert to named int
@@ -11,14 +11,20 @@ blimMD <- function(K, N.R, R = as.binmat(N.R),
   nstates <- nrow(K)
 
   ## Assigning state K given response R
-  d.RK  <- switch(match.arg(errtype),
-        both = apply(K, 1,
-             function(k) colSums(xor(t(R), k))),
-       error = apply(K, 1,
-             function(k) colSums(ifelse(k - t(R) < 0, NA, k - t(R)))),
-    guessing = apply(K, 1,
-             function(k) colSums(ifelse(t(R) - k < 0, NA, t(R) - k)))
-  )
+  d.RK <- if(length(which(c(betafix, etafix) == 0))) {
+    apply(K, 1, function(k) {
+      RwoK <- t(R) & !k
+      idx <- which(RwoK, arr.ind=TRUE)
+      RwoK[idx[idx[, "row"] %in% which(etafix == 0), ]] <- NA
+      
+      KwoR <- k & !t(R)
+      idx <- which(KwoR, arr.ind=TRUE)
+      KwoR[idx[idx[, "row"] %in% which(betafix == 0), ]] <- NA
+      colSums(RwoK) + colSums(KwoR)
+    })
+  } else {
+    apply(K, 1, function(k) colSums(xor(t(R), k)))
+  }
   d.min <- apply(d.RK, 1, min, na.rm=TRUE)            # minimum discrepancy
 
   i.RK  <- switch(match.arg(incrule),                 # inclusion rule
@@ -51,6 +57,8 @@ blimMD <- function(K, N.R, R = as.binmat(N.R),
   }
   beta[is.na(beta)] <- 0
    eta[is.na( eta)] <- 0
+  beta[!is.na(betafix)] <- betafix[!is.na(betafix)]  # reset fixed parameters
+   eta[!is.na( etafix)] <-  etafix[!is.na( etafix)]
 
   z <- list(discrepancy=c(disc), P.K=P.K, beta=beta, eta=eta,
     disc.tab=disc.tab, nstates=nstates, npatterns=npat, ntotal=N,
