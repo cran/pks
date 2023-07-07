@@ -1,0 +1,426 @@
+\documentclass[nojss]{jss}
+
+\usepackage{amsmath}
+\usepackage{cancel}
+
+%% need no \usepackage{Sweave}
+\SweaveOpts{engine = R, keep.source=TRUE, eps = FALSE, echo = TRUE}
+
+%\VignetteIndexEntry{Parameter Estimation in Probabilistic Knowledge Structures -- Step by Step}
+%\VignetteKeywords{knowledge spaces, probabilistic knowledge structures, basic local independence model, simple learning model}
+%\VignettePackage{pks}
+
+\title{Parameter Estimation in Probabilistic Knowledge Structures -- Step by
+       Step\\{\normalsize\normalfont Jul/6/2023}\vspace{-2ex}}
+\Shorttitle{Parameter Estimation in Probabilistic Knowledge Structures}
+\author{Florian Wickelmaier\\University of Tuebingen \And
+        J\"urgen Heller\\University of Tuebingen}
+\Plainauthor{Florian Wickelmaier, J\"urgen Heller}
+
+\Abstract{
+This vignette provides some details about the parameter estimation procedures
+implemented in the pks package.
+}
+
+\Keywords{Knowledge spaces, probabilistic knowledge structures, basic local
+independence model, simple learning model}
+
+\Address{
+  Florian Wickelmaier\\
+  Department of Psychology\\
+  University of Tuebingen\\
+  Schleichstr. 4\\
+  72076 Tuebingen, Germany\\
+  E-mail: \email{wickelmaier@web.de}\\
+  URL: \url{http://www.mathpsy.uni-tuebingen.de/wickelmaier/}\\
+
+  J\"urgen Heller\\
+  Department of Psychology\\
+  University of Tuebingen\\
+  Schleichstr. 4\\
+  72076 Tuebingen, Germany
+}
+
+\begin{document}
+
+<<echo=FALSE, results=hide>>=
+R <- c("0000", "0001")
+@
+
+\cite{DoignonFalmagne99} describe two probabilistic models frequently used in
+applications of the theory of knowledge structures: the basic local
+independence model (BLIM) and the simple learning model (SLM). This vignette
+provides some details about the parameter estimation procedures implemented in
+the pks package, which are an adaptation of the expectation-maximization
+algorithm. Section~1 contains methods for the BLIM. The results are taken from
+\cite{HellerWickelmaier13} and are repeated here (with intermediate steps) in
+order to motivate the analogous derivations for the SLM in Section~2.
+
+\section{The basic local independence model}
+
+\subsection{Likelihood and log-likelihood}
+
+Let $R \in \mathcal{R}$ be a response pattern, $K \in \mathcal{K}$ be a
+knowledge state, and $q \in Q$ be an item. Let $N_R$ be the observed frequency
+of response pattern $R$. For the BLIM, the parameter vector $\theta = (\beta,
+\eta, \pi)$ consists of (vectors of) careless error, lucky guess, and state
+probabilities. The likelihood of $\theta$ given all observed response patterns
+has the multinomial form
+\begin{equation}
+  L(\theta) = \prod_R P(R)^{N_R}
+            = \prod_R \big(\sum_K P(R, K)\big)^{N_R}.
+\end{equation}
+Let $M_{RK}$ denote the unobservable frequency of pattern $R$ resulting from
+state $K$. Then the likelihood simplifies to
+\begin{align}
+  L(\theta) &= \prod_R \prod_K P(R, K)^{M_{RK}}\\
+            &= \prod_R \prod_K \bigl(P(R \mid K) \cdot P(K)\bigr)^{M_{RK}}\\
+            &= \prod_R \prod_K \biggl(
+                   \prod_{q \in K \setminus R}        \!\!\beta_q
+                 \!\prod_{q \in K \cap R}             \!\!(1 - \beta_q)
+                 \!\prod_{q \in R \setminus K}        \!\!\eta_q
+                 \!\prod_{q \in \bar{R} \cap \bar{K}} \!\!(1 - \eta_q)
+               \biggr)^{M_{RK}} \!\cdot
+               \bigl(\pi_K\bigr)^{M_{RK}}
+\end{align}
+and the log-likelihood becomes
+\begin{align}
+  \ell(\theta)
+    &= \sum_R \sum_K M_{RK} \biggl(
+          \sum_{q \in K \setminus R}        \!\!\log\beta_q +
+      \!\!\sum_{q \in K \cap R}             \!\!\log(1 - \beta_q) +
+      \!\!\sum_{q \in R \setminus K}        \!\!\log\eta_q +
+      \!\!\sum_{q \in \bar{R} \cap \bar{K}} \!\!\log(1 - \eta_q)
+      \biggr)\nonumber\\
+    &+ \sum_R \sum_K M_{RK} \log\pi_K.
+\end{align}
+
+\subsection{Careless errors and lucky guesses}
+
+Let $\mathcal{R}_q$ and $\mathcal{R}_{\bar{q}}$ denote the subset of response
+patterns that contain and do not contain $q$, respectively. Similarly, let
+$\mathcal{K}_q$ and $\mathcal{K}_{\bar{q}}$ denote the subset of knowledge
+states that contain and do not contain $q$, respectively. Then the partial
+derivative of the log-likelihood with respect to $\beta_q$ is
+\begin{align}
+  \frac{\partial\ell(\theta)}{\partial\beta_q}
+    &= \sum_R \sum_K \biggl(
+        \sum_{q \in K \setminus R} \!\frac{M_{RK}}{\beta_q} -
+      \!\sum_{q \in K \cap R}      \!\frac{M_{RK}}{1 - \beta_q}
+      \biggr)\\
+    &= \sum_{R \in \mathcal{R}_{\bar{q}}} \sum_{K \in \mathcal{K}_q}
+         \!\frac{M_{RK}}{\beta_q} -
+       \sum_{R \in \mathcal{R}_q}         \sum_{K \in \mathcal{K}_q}
+         \!\frac{M_{RK}}{1 - \beta_q}\\
+    &= \sum_R \sum_{K \in \mathcal{K}_q}
+         \!\frac{M_{RK}}{\beta_q} \cdot (1 - i) -
+         \!\frac{M_{RK}}{1 - \beta_q} \cdot i,
+\end{align}
+where $i = 1$ if $R \in \mathcal{R}_q$, and $i = 0$ else . Setting the
+derivative to zero yields
+\begin{align}
+  \sum_R \sum_{K \in \mathcal{K}_q}
+    \!\frac{M_{RK} (1 - i) (1 - \hat{\beta}_q) - M_{RK} i \hat{\beta}_q}
+           {\hat{\beta}_q (1 - \hat{\beta}_q)}
+    &= 0\\
+  \sum_R \sum_{K \in \mathcal{K}_q}
+    M_{RK} - M_{RK} \hat{\beta}_q - M_{RK} i +
+    \cancel{M_{RK} i \hat{\beta}_q} - \cancel{M_{RK} i \hat{\beta}_q}
+    &= 0\\
+  \sum_R \sum_{K \in \mathcal{K}_q} M_{RK} (1 - i)
+    &= \sum_R \sum_{K \in \mathcal{K}_q} M_{RK} \hat{\beta}_q\\
+  \sum_{R \in \mathcal{R}_{\bar{q}}} \sum_{K \in \mathcal{K}_q} M_{RK}
+    &= \hat{\beta}_q \sum_R \sum_{K \in \mathcal{K}_q} M_{RK}\\
+  \hat{\beta}_q &=
+    \frac{\displaystyle
+          \sum_{R \in \mathcal{R}_{\bar{q}}}
+          \sum_{K \in \mathcal{K}_q} M_{RK}}
+         {\displaystyle
+          \sum_R \sum_{K \in \mathcal{K}_q} M_{RK}}\label{eq:betahat}.
+\end{align}
+
+The partial derivative of the log-likelihood with respect to $\eta_q$ is
+\begin{align}
+  \frac{\partial\ell(\theta)}{\partial\eta_q}
+    &= \sum_R \sum_K \biggl(
+        \sum_{q \in R \setminus K}        \!\frac{M_{RK}}{\eta_q} -
+      \!\sum_{q \in \bar{R} \cap \bar{K}} \!\frac{M_{RK}}{1 - \eta_q}
+      \biggr)\\
+    &= \sum_{R \in \mathcal{R}_q}         \sum_{K \in \mathcal{K}_{\bar{q}}}
+         \!\frac{M_{RK}}{\eta_q} -
+       \sum_{R \in \mathcal{R}_{\bar{q}}} \sum_{K \in \mathcal{K}_{\bar{q}}}
+         \!\frac{M_{RK}}{1 - \eta_q}\\
+    &= \sum_R \sum_{K \in \mathcal{K}_{\bar{q}}}
+         \!\frac{M_{RK}}{\eta_q} \cdot i -
+         \!\frac{M_{RK}}{1 - \eta_q} \cdot (1 - i),
+\end{align}
+where, as above, $i = 1$ if $R \in \mathcal{R}_q$, and $i = 0$ else. Setting
+the derivative to zero yields
+\begin{align}
+  \sum_R \sum_{K \in \mathcal{K}_{\bar{q}}}
+    \!\frac{M_{RK} i (1 - \hat{\eta}_q) - M_{RK} (1 - i) \hat{\eta}_q}
+           {\hat{\eta}_q (1 - \hat{\eta}_q)}
+    &= 0\\
+  \sum_R \sum_{K \in \mathcal{K}_{\bar{q}}}
+    M_{RK} i - \cancel{M_{RK} i \hat{\eta}_q} -
+    M_{RK} \hat{\eta}_q + \cancel{M_{RK} i \hat{\eta}_q}
+    &= 0\\
+  \sum_R \sum_{K \in \mathcal{K}_{\bar{q}}} M_{RK} i
+    &= \sum_R \sum_{K \in \mathcal{K}_{\bar{q}}} M_{RK} \hat{\eta}_q\\
+  \sum_{R \in \mathcal{R}_q} \sum_{K \in \mathcal{K}_{\bar{q}}} M_{RK}
+    &= \hat{\eta}_q \sum_R \sum_{K \in \mathcal{K}_{\bar{q}}} M_{RK}\\
+  \hat{\eta}_q &=
+    \frac{\displaystyle
+          \sum_{R \in \mathcal{R}_q}
+          \sum_{K \in \mathcal{K}_{\bar{q}}} M_{RK}}
+         {\displaystyle
+          \sum_R \sum_{K \in \mathcal{K}_{\bar{q}}} M_{RK}}\label{eq:etahat}.
+\end{align}
+
+\subsection{State probabilities}
+
+Including the constraint $\sum_K \pi_K = 1$ into the log-likelihood using the
+Lagrange multiplier $\lambda$ leads to the function
+\begin{equation}
+  \ell(\pi, \lambda) = \sum_R \sum_K M_{RK} \log\pi_K
+                     + \lambda\biggl(\sum_K \pi_K - 1\biggr)
+\end{equation}
+to be maximized with respect to $\pi_K$ and $\lambda$. Thus,
+\begin{align}
+  \frac{\partial\ell(\pi, \lambda)}{\partial\pi_K}
+    &= \sum_R \frac{M_{RK}}{\pi_K} + \lambda,\label{eq:dpi}\\
+  \frac{\partial\ell(\pi, \lambda)}{\partial\lambda}
+    &= \sum_K \pi_K - 1\label{eq:dlambda}.
+\end{align}
+Setting (\ref{eq:dpi}) to zero and solving for $\pi_K$ gives
+\begin{equation}
+  \pi_K = -\frac{\sum_R M_{RK}}{\lambda}\label{eq:pihat-part}.
+\end{equation}
+Setting (\ref{eq:dlambda}) to zero, substituting $\pi_K$ by
+(\ref{eq:pihat-part}), and solving for $\lambda$ gives
+\begin{equation}
+  \hat{\lambda} = -\sum_R \sum_K M_{RK} = -N,
+\end{equation}
+which, when substituted back into (\ref{eq:pihat-part}), leads to
+\begin{equation}
+  \hat{\pi}_K = \frac{\sum_R M_{RK}}{N}\label{eq:pihat}.
+\end{equation}
+
+\subsection{Expectation maximization}
+
+The expectation of the unobservable frequencies $M_{RK}$ is
+\begin{align}
+  E(M_{RK}) &= N_R \cdot P(K | R)\label{eq:estep_blim}\\
+            &= N_R \cdot \frac{P(R | K) P(K)}{P(R)}\\
+            &= N_R \cdot \frac{P(R | K) P(K)}{\sum_K P(R | K) P(K)},
+\end{align}
+where, in each iteration, $P(R | K)$ and $P(K)$ are calculated from the
+current values of $\hat{\beta}_q$, $\hat{\eta}_q$, and $\hat{\pi}_K$. These
+values are iteratively updated when substituting the $M_{RK}$ by their
+expectations in (\ref{eq:betahat}), (\ref{eq:etahat}), and (\ref{eq:pihat}).
+
+\subsection{Minimum-discrepancy maximum likelihood}
+
+Assuming that $K$ is the underlying knowledge state for a response pattern
+$R$, the distance
+\begin{equation}
+  d(R, K) = |(R \setminus K) \cup (K \setminus R)|
+\end{equation}
+contains the number of response errors in $R$. Minimizing the number of
+response errors, a state is assigned to $R$ if its distance takes on the
+smallest possible value,
+\begin{equation}
+  i_{RK} =
+  \begin{cases}
+    1 & \text{ if } d(R, K) = \min_K d(R, K),\\
+    0 & \text{else.}
+  \end{cases}
+\end{equation}
+Under this assumption of minimum discrepancy, the conditional probability $P(K
+| R)$ is estimated by $i_{RK}/i_{R+}$, where $i_{R+} = \sum_K i_{RK}$.
+Consequently,
+\begin{equation}
+  \hat{P}(R, K) = \hat{P}(K | R) \cdot \hat{P}(R)
+                = \frac{i_{RK}}{i_{R+}} \cdot \frac{N_R}{N}.
+\end{equation}
+This leads to the minimum-discrepancy estimators
+\begin{align}
+  \hat{\pi}_K &= \hat{P}(K) = \sum_R \hat{P}(R, K)
+               = \sum_R \frac{i_{RK}}{i_{R+}} \cdot \frac{N_R}{N}\\
+  \hat{\beta}_q &= \hat{P}(\mathcal{R}_{\bar q} | \mathcal{K}_q)
+                 = \frac{\hat{P}(\mathcal{R}_{\bar q}, \mathcal{K}_q)}
+                        {\hat{P}(\mathcal{K}_q)}
+                 = \frac{\displaystyle\sum_{R \in \mathcal{R}_{\bar q}}
+                                      \sum_{K \in \mathcal{K}_q}
+                                      \hat{P}(R, K)}
+                        {\displaystyle\sum_{K \in \mathcal{K}_q}
+                                      \hat{P}(K)}
+                 = \frac{\displaystyle\sum_{R \in \mathcal{R}_{\bar q}}
+                                      \sum_{K \in \mathcal{K}_q}
+                                      \frac{i_{RK}}{i_{R+}} \cdot N_R}
+                        {\displaystyle\sum_R \sum_{K \in \mathcal{K}_q}
+                                      \frac{i_{RK}}{i_{R+}} \cdot N_R}\\
+  \hat{\eta}_q  &= \hat{P}(\mathcal{R}_q | \mathcal{K}_{\bar q})
+                 = \frac{\hat{P}(\mathcal{R}_q, \mathcal{K}_{\bar q})}
+                        {\hat{P}(\mathcal{K}_{\bar q})}
+                 = \frac{\displaystyle\sum_{R \in \mathcal{R}_q}
+                                      \sum_{K \in \mathcal{K}_{\bar q}}
+                                      \hat{P}(R, K)}
+                        {\displaystyle\sum_{K \in \mathcal{K}_{\bar q}}
+                                      \hat{P}(K)}
+                 = \frac{\displaystyle\sum_{R \in \mathcal{R}_q}
+                                      \sum_{K \in \mathcal{K}_{\bar q}}
+                                      \frac{i_{RK}}{i_{R+}} \cdot N_R}
+                        {\displaystyle\sum_R \sum_{K \in \mathcal{K}_{\bar q}}
+                                      \frac{i_{RK}}{i_{R+}} \cdot N_R}.
+\end{align}
+An estimator that combines minimum discrepancy and maximum likelihood is
+obtained by augmenting the E step in (\ref{eq:estep_blim}) such that the
+expectation can only be non-zero under minimum discrepancy,
+\begin{equation}
+  E(M_{RK}) = N_R \cdot
+              \frac{i_{RK} \cdot P(K | R)}
+                   {\sum_K i_{RK} \cdot P(K | R)}\label{eq:estep_mdml}.
+\end{equation}
+Substituting the $M_{RK}$ by this expectation in (\ref{eq:betahat}),
+(\ref{eq:etahat}), and (\ref{eq:pihat}) yields the minimum-discrepancy maximum
+likelihood estimators.
+
+
+\section{The simple learning model}
+
+\subsection{Likelihood and log-likelihood}
+
+The SLM constrains the state distribution $P(K)$ by introducing item-specific
+solvability parameters $g_q$. Thus, the parameter vector $\theta = (\beta,
+\eta, g)$ consists of (vectors of) careless error, lucky guess, and
+solvability probabilities. With the unobservable frequency $M_{RK}$ as defined
+above, the likelihood becomes
+\begin{align}
+  L(\theta) &= \prod_R \prod_K \bigl(P(R \mid K) \cdot P(K)\bigr)^{M_{RK}}\\
+            &= \prod_R \prod_K P(R \mid K)^{M_{RK}}
+               \cdot \biggl(\prod_{q \in K} g_q \!
+                            \prod_{q \in K^\mathcal{O}} \! (1 - g_{q})
+                     \biggr)^{M_{RK}},
+\end{align}
+where
+\begin{equation}
+  K^\mathcal{O} = \{q \notin K \mid K \cup \{q\} \in \mathcal{K}\}
+\end{equation}
+is the set of items that can be learned from $K$, called the outer fringe of
+$K$. According to the SLM, $P(K)$ is the product of the probabilities of
+mastering all items in $K$, $g_q$, and not mastering any items accessible from
+$K$, $1 - g_q$. The log-likelihood then becomes
+\begin{align}
+  \ell(\theta)
+    &= \sum_R \sum_K M_{RK} \log P(R \mid K)\nonumber\\
+    &+ \sum_R \sum_K M_{RK} \biggl(
+        \sum_{q \in K}              \!\log g_q +
+      \!\sum_{q \in K^\mathcal{O}} \!\log(1 - g_{q})\biggr).
+\end{align}
+
+\subsection{Careless errors and lucky guesses}
+
+The estimators for careless error $\beta$ and lucky guess $\eta$ parameters
+in the SLM are the same as for the BLIM.
+
+\subsection{Solvability parameters}
+
+The partial derivative of the log-likelihood with respect to $g_q$ is
+\begin{align}
+  \frac{\partial\ell(\theta)}{\partial g_q}
+    &= \sum_R \sum_K \biggl(
+        \sum_{q \in K}             \!\frac{M_{RK}}{g_q} -
+      \!\sum_{q \in K^\mathcal{O}} \!\frac{M_{RK}}{1 - g_q}
+      \biggr)\\
+    &= \sum_R \sum_{K \in \mathcal{K}_q}
+         \!\frac{M_{RK}}{g_q} -
+       \sum_R \sum_{K \in \mathcal{K}^\mathcal{O}_q}
+         \!\frac{M_{RK}}{1 - g_q}\\
+    &= \sum_R \sum_K
+         \!\frac{M_{RK}}{g_q} \cdot i -
+         \!\frac{M_{RK}}{1 - g_q} \cdot j,
+\end{align}
+where
+\begin{equation}
+  i =
+  \begin{cases}
+    1 & \text{if } q \in K\\
+    0 & \text{if } q \notin K
+  \end{cases}, \qquad
+  j =
+  \begin{cases}
+    1 & \text{if } q \in K^\mathcal{O}\\
+    0 & \text{if } q \notin K^\mathcal{O}
+  \end{cases},
+\end{equation}
+and $\mathcal{K}^\mathcal{O}_q$ is the subset of states whose outer fringe
+contains $q$. Setting the derivative to zero yields
+\begin{align}
+  \sum_R \sum_K
+    \frac{M_{RK} i (1 - \hat{g}_q) - M_{RK} j \hat{g}_q}
+         {\hat{g}_q (1 - \hat{g}_q)}
+    &= 0\\
+  \sum_R \sum_K
+    M_{RK} i - M_{RK} i \hat{g}_q - M_{RK} j \hat{g}_q
+    &= 0\\
+  \sum_R \sum_K M_{RK} i
+    &= \sum_R \sum_K  \hat{g}_q (M_{RK} i + M_{RK} j)\\
+  \sum_R \!\sum_{K \in \mathcal{K}_q} M_{RK}
+    &= \hat{g}_q \biggl(
+      \sum_R \!\sum_{K \in \mathcal{K}_q}             \!M_{RK} +
+      \sum_R \!\sum_{K \in \mathcal{K}^\mathcal{O}_q} \!M_{RK}
+      \biggr)\\
+  \hat{g}_q &=
+    \frac{\displaystyle
+          \sum_R \!\sum_{K \in \mathcal{K}_q} M_{RK}}
+         {\displaystyle
+          \sum_R \!\sum_{K \in \mathcal{K}_q}             \!M_{RK} +
+          \sum_R \!\sum_{K \in \mathcal{K}^\mathcal{O}_q} \!M_{RK}}.
+\end{align}
+
+\subsection{Expectation maximization}
+
+The E step has the same form as for the BLIM. In each iteration, $P(R | K)$
+and $P(K)$ are calculated from the current values of $\hat{\beta}_q$,
+$\hat{\eta}_q$, and $\hat{g}_q$.
+
+\subsection{Minimum-discrepancy maximum likelihood}
+
+The minimum-discrepancy estimators $\hat{\beta}_q$ and $\hat{\eta}_q$ are the
+same as for the BLIM. For the solvability parameters,
+\begin{align}
+  \hat{g}_q &= \hat{P}(\mathcal{K}_q |
+                       \mathcal{K}_q \cup \mathcal{K}^\mathcal{O}_q)
+             = \frac{\hat{P}(\mathcal{K}_q,
+                             \mathcal{K}_q \cup \mathcal{K}^\mathcal{O}_q)}
+                    {\hat{P}(\mathcal{K}_q \cup \mathcal{K}^\mathcal{O}_q)}
+             = \frac{\hat{P}(\mathcal{K}_q)}
+                    {\hat{P}(\mathcal{K}_q \cup \mathcal{K}^\mathcal{O}_q)}\\
+            &= \frac{\displaystyle\sum_R \! \sum_{K \in \mathcal{K}_q} \!
+                                  \hat{P}(R, K)}
+                    {\displaystyle\sum_R \! \sum_{K \in \mathcal{K}_q} \!
+                                  \hat{P}(R, K) +
+                     \displaystyle\sum_R\!
+                                  \sum_{K \in \mathcal{K}^\mathcal{O}_q} \!
+                                  \hat{P}(R, K)}\\
+            &= \frac{\displaystyle\sum_R \! \sum_{K \in \mathcal{K}_q}
+                                  \frac{i_{RK}}{i_{R+}} \cdot N_R}
+                    {\displaystyle\sum_R \! \sum_{K \in \mathcal{K}_q}
+                                  \frac{i_{RK}}{i_{R+}} \cdot N_R
+                                + \sum_R \!
+                                  \sum_{K \in \mathcal{K}^\mathcal{O}_q}
+                                  \frac{i_{RK}}{i_{R+}} \cdot N_R}.
+\end{align}
+Minimum-discrepancy maximum likelihood estimators for $\beta$, $\eta$, and $g$
+are obtained from augmenting the E step as in (\ref{eq:estep_mdml}).
+
+\section*{Acknowledgments}
+
+F.W.\ would like to thank Alice Maurer for her thoughtful comments on the
+derivation of the estimators.
+
+\bibliography{pks}
+
+\end{document}
+

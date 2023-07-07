@@ -6,13 +6,19 @@ importFrom("graphics", "abline", "panel.smooth", "plot")
 export(
   "blim",
   "blimMD",
+  "slm",
+  "getSlmPK",
   "as.pattern",
   "as.binmat",
+  "is.subset",
   "is.forward.graded",
   "is.backward.graded",
+  "is.downgradable",
   "delineate",
   "jacobian",
-  "ita"
+  "ita",
+  "getKFringe",
+  "blimit"
 )
 
 S3method("anova", "blim")
@@ -24,5 +30,9 @@ S3method("residuals", "blim")
 S3method("plot", "blim")
 S3method("print", "blim")
 S3method("simulate", "blim")
+
+S3method("coef", "slm")
+S3method("print", "slm")
+
 S3method("print", "ita")
 

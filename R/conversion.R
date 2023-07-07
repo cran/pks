@@ -1,34 +1,46 @@
-## Mar/30/2022: as.binmat() gains as.logical arg
+# Mar/30/2022 as.binmat() gains as.logical arg
+# Jun/02/2023 useNames argument for as.pattern()
+# Jun/06/2023 is.subset()
+
+
+## Subset relation incidence matrix
+is.subset <- function(R) {
+  I <- t(apply(R, 1, function(r) apply(r * t(R) == r, 2, all)))
+  if(!is.null(dimnames(I))) names(dimnames(I)) <- c("<", ">")
+  I
+}
 
 
 ## Convert binary matrix to vector of response patterns
-as.pattern <- function(R, freq = FALSE, as.letters = FALSE, as.set = FALSE){
-  if(freq){
+as.pattern <- function(R, freq = FALSE, useNames = FALSE, as.set = FALSE,
+                       sep = "", emptyset = "{}", as.letters = NULL) {
+  if(!is.null(as.letters)) {
+    warning("as.letters argument is deprecated, use useNames instead")
+    useNames <- as.letters
+  }
+  if(freq) {
     N.R <- table(apply(R, 1, paste, collapse=""))
     setNames(as.integer(N.R), names(N.R))          # convert to named int
-  }else
-    if(as.letters | as.set){
+  } else
+    if(useNames | as.set) {
       nitems <- ncol(R)
-      item.names <- 
-       make.unique(c("a", letters[(seq_len(nitems) %% 26) + 1])[-(nitems + 1)],
-                     sep="")
-      lett <- apply(R, 1, function(r) paste(item.names[which(r == 1)],
-                    collapse=""))
-      lett[lett == ""] <- "0"
+      item.names <- colnames(R)
+      if(is.null(item.names))
+        item.names <- make.unique(
+          c("a", letters[(seq_len(nitems) %% 26) + 1])[-(nitems + 1)],
+          sep = ""
+        )
+      lett <- unname(apply(R == TRUE, 1, function(r) item.names[r]))
 
-      if(as.set){
-        # Separate elements in lett by "_", remove leading "_",
-        # then strsplit along "_" (trailing "_" are ignored by strsplit)
-        setfam <- as.set(lapply(strsplit(
-          gsub("^_(.+)", "\\1", gsub("([0-9]*)", "\\1_", unname(lett))),
-          "_"), as.set))
-        if (set_contains_element(setfam, set("0")))
-          setfam[[set("0")]] <- set()  # proper empty set
-        setfam  # return family of sets, class set
-      }else
-        lett    # return letters, class character
-    }else
-      unname(apply(R, 1, paste, collapse=""))
+      if(as.set) {
+        as.set(sapply(lett, as.set))  # return family of sets, class set
+      } else {
+        lett <- sapply(lett, paste, collapse = sep)
+        lett[lett == ""] <- emptyset
+        lett                          # return letters, class character
+      }
+    } else
+      unname(apply(R, 1, paste, collapse = ""))
 }
 
 

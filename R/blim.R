@@ -77,7 +77,7 @@ blim <- function(K, N.R, method = c("MD", "ML", "MDML"), R = as.binmat(N.R),
   ## Mean number of errors
   P.Kq <- numeric(nitems)
   for(j in seq_len(nitems))
-    P.Kq[j] <- sum(P.K[which(K[, j] == 1)])
+    P.Kq[j] <- sum(P.K[K[, j] == 1])
   nerror <- c("careless error" = sum(beta * P.Kq),
                  "lucky guess" = sum( eta * (1 - P.Kq)))
 
@@ -127,27 +127,27 @@ blimEM <- function(P.K, beta, eta, K, R, N.R, N, nitems, i.RK, PRKfun,
   em      <- c(MD = 0, ML = 1, MDML = 1)[method]
   md      <- c(MD = 1, ML = 0, MDML = 1)[method]
   beta.num <- beta.denom <- eta.num <- eta.denom <- beta
-  while ((maxdiff > tol) && (iter < maxiter) &&
-         ((md*(1 - em) != 1) || (iter == 0))) {
+  while((maxdiff > tol) && (iter < maxiter) &&
+        ((md*(1 - em) != 1) || (iter == 0))) {
     pi.old   <- P.K
     beta.old <- beta
     eta.old  <- eta
 
-    P.R.K  <- do.call(PRKfun, list(beta, eta, K, R))  # P(R|K)
-    P.R    <- as.numeric(P.R.K %*% P.K)
-    P.K.R  <- P.R.K * outer(1/P.R, P.K)         # prediction of P(K|R)
-    mat.RK <- i.RK^md * P.K.R^em
-    m.RK   <- (mat.RK / rowSums(mat.RK)) * N.R  # m.RK = E(M.RK) = P(K|R)*N(R)
+    P.R.K <- do.call(PRKfun, list(beta, eta, K, R))  # P(R|K)
+    P.R   <- as.numeric(P.R.K %*% P.K)
+    P.K.R <- P.R.K * outer(1/P.R, P.K)         # prediction of P(K|R)
+    m.RK  <- i.RK^md * P.K.R^em
+    m.RK  <- (m.RK / rowSums(m.RK)) * N.R      # m.RK = E(M.RK) = P(K|R)*N(R)
 
     ## Distribution of knowledge states
     P.K <- colSums(m.RK) / N
 
     ## Careless error and guessing parameters
     for (j in seq_len(nitems)) {
-      beta.num[j]   <- sum(m.RK[which(R[, j] == 0), which(K[, j] == 1)])
-      beta.denom[j] <- sum(m.RK[, which(K[, j] == 1)])
-       eta.num[j]   <- sum(m.RK[which(R[, j] == 1), which(K[, j] == 0)])
-       eta.denom[j] <- sum(m.RK[, which(K[, j] == 0)])
+      beta.num[j]   <- sum(m.RK[R[, j] == 0, K[, j] == 1])
+      beta.denom[j] <- sum(m.RK[           , K[, j] == 1])
+       eta.num[j]   <- sum(m.RK[R[, j] == 1, K[, j] == 0])
+       eta.denom[j] <- sum(m.RK[           , K[, j] == 0])
     }
     beta <- drop(betaeq %*% beta.num / betaeq %*% beta.denom)
      eta <- drop( etaeq %*%  eta.num /  etaeq %*%  eta.denom)

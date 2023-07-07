@@ -1,6 +1,6 @@
 ## Item tree analysis
-ita <- function(R, L = NULL, makeK = FALSE) {
-
+ita <- function(R, L = NULL, makeK = FALSE,
+                search = c("local", "global")) {
   ## Helpers
   isTransitive <- function(x) {
     P <- bb <= x
@@ -17,7 +17,7 @@ ita <- function(R, L = NULL, makeK = FALSE) {
     if(total) sum(disc) else disc
   }
 
-  getoptimalL <- function(bb, R, transitiveL) {
+  getoptimalL <- function(bb, R, transitiveL, search = search) {
     LL <- rev(transitiveL)
     if(length(LL) < 2)
       return(LL)
@@ -26,10 +26,15 @@ ita <- function(R, L = NULL, makeK = FALSE) {
     for(i in 2:length(LL)) {  # reduce threshold value
       P <- bb <= LL[i]
       dsum <- getdisc(R, getKfromP(P))
-      if(dsum1 < dsum) break  # stop when dsum starts getting worse
-      dsum1 <- dsum
+      if(search == "local" && dsum1 < dsum) {
+        return(LL[i - 1])     # local: stop when dsum starts getting worse
+      }
+      if(dsum1 > dsum) {      # global: full search for optimal dsum
+        dsum1 <- dsum
+        optL <- LL[i]
+      }
     }
-    LL[i - 1]
+    optL
   }
 
   stopifnot(is.matrix(R))
@@ -44,8 +49,12 @@ ita <- function(R, L = NULL, makeK = FALSE) {
   tL <- Filter(isTransitive, sort(unique(as.vector(bb))))
 
   ## Select optimal threshold value
-  searchL <- is.null(L)
-  if(searchL) L <- getoptimalL(bb, R, transitiveL = tL)
+  searchL <- NULL
+  search <- match.arg(search)
+  if(is.null(L)) {
+    L <- getoptimalL(bb, R, transitiveL = tL, search = search)
+    searchL <- search
+  }
 
   ## Define relation according to threshold
   if(!isTransitive(L)) stop("relation not transitive for threshold L")
@@ -55,11 +64,12 @@ ita <- function(R, L = NULL, makeK = FALSE) {
   K <- disc <- NULL
   if(makeK) {
     K <- getKfromP(P)
+    rownames(K) <- as.pattern(K)
     disc <- getdisc(R, K, total = FALSE)
     disc <- c(disc, total = sum(disc))
   }
   retval <- list(K = K, discrepancy = disc, transitiveL = tL,
-                 searchL = searchL, L = L, P = bb)
+                 searchL = searchL, L = L, P = bb, I = P)
   class(retval) <- "ita"
   retval
 }
@@ -70,7 +80,7 @@ print.ita <- function(x, digits = max(3, getOption("digits") - 3),
   cat("\nItem tree analysis (ITA)\n")
   cat("\nViolations of precedence relation:\n")
   print(x$P)
-  cat(if(x$searchL) "\nOptimal threshold" else "\nThreshold", "(L):", x$L)
+  cat("\nSelected threshold (L):", x$L)
   cat("\nTransitive thresholds:\n")
   print(x$transitiveL)
   if(!is.null(x$K)) {

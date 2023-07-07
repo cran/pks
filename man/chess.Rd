@@ -16,7 +16,7 @@
     \item{\code{dst4}}{the knowledge structure DST4.}
     \item{\code{N.R}}{a named integer vector.  The names denote response
       patterns, the values denote their frequencies.}
-    \item{\code{R}}{a state-by-problem indicator matrix representing the raw
+    \item{\code{R}}{a person-by-problem indicator matrix representing the
       responses.  Column names \code{hdbgXX} and \code{grazYY} identify
       responses collected in Heidelberg and Graz, respectively.}
   }

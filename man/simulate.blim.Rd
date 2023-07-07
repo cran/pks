@@ -31,16 +31,29 @@
 \examples{
 data(DoignonFalmagne7)
  
-blim1 <- blim(DoignonFalmagne7$K, DoignonFalmagne7$N.R)
+m1 <- blim(DoignonFalmagne7$K, DoignonFalmagne7$N.R)
+simulate(m1)
 
-simulate(blim1)
-
-## Parametric bootstrap
-disc <- replicate(200, blim(blim1$K, simulate(blim1))$discrepancy)
+## Parametric bootstrap for the BLIM
+disc <- replicate(200, blim(m1$K, simulate(m1))$discrepancy)
 
 hist(disc, col = "lightgray", border = "white", freq = FALSE, breaks = 20,
-     main = "Parametric bootstrap", xlim = c(.05, .3))
-abline(v = blim1$discrepancy, lty = 2)
+     main = "BLIM parametric bootstrap", xlim = c(.05, .3))
+abline(v = m1$discrepancy, lty = 2)
+
+## Parameter recovery for the SLM
+m0 <- list( P.K = getSlmPK( g = rep(.8, 5),
+                            K = DoignonFalmagne7$K,
+                           Ko = getKFringe(DoignonFalmagne7$K)),
+           beta = rep(.1, 5),
+            eta = rep(.1, 5),
+              K = DoignonFalmagne7$K,
+         ntotal = 800)
+class(m0) <- c("slm", "blim")
+
+pars <- replicate(20, coef(slm(m0$K, simulate(m0), method = "ML")))
+boxplot(t(pars), horizontal = TRUE, las = 1,
+        main = "SLM parameter recovery")
 
 ## See ?endm for further examples.
 }

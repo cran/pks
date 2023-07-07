@@ -1,3 +1,24 @@
+Changes in 0.6-0
+
+  * DESCRIPTION: suggests relations and Rgraphviz for plotting knowledge
+    structures and precedence relations, see examples in is.subset() and
+    in ita()
+  * New vignette: vignette("EstimationStepByStep", package = "pks"), parameter
+    estimation methods implemented in the package
+  * New function: slm(), fitting and testing simple learning models
+  * New function: getKFringe(), outer and inner fringes of a knowledge
+    structure
+  * New function: is.downgradable(), check for downgradabiliy
+  * conversion.R: as.pattern(..., useNames = TRUE) uses item names to
+    represent response patterns, as.letters argument is deprecated
+  * ita.R: ita() gains search argument for local or global threshold search;
+    returns precedence relation as a logical incidence matrix
+  * New function: is.subset(), subset relation incidence matrix
+  * New function: blimit(), BLIM identification analysis (adapted from
+    Stefanutti et al., 2012)
+  * New data sets: fraction17 (Stefanutti and de Chiusole, 2017),
+    subtraction13 (de Chiusole and Stefanutti, 2013)
+
 Changes in 0.5-0
 
   * blim(): use (if possible) matrix multiplication to compute the conditional
