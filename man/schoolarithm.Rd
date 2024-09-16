@@ -130,7 +130,7 @@
 \examples{
 data(schoolarithm)
 
-## Fraction problems used in Sefanutti and de Chiusole (2017)
+## Fraction problems used in Stefanutti and de Chiusole (2017)
 R <- fraction17[, c(4:8, 10:11, 15:20)]
 colnames(R) <- 1:13
 N.R <- as.pattern(R, freq = TRUE)

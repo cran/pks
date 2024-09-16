@@ -1,6 +1,6 @@
 Package: pks
-Version: 0.6-0
-Date: 2023-07-07
+Version: 0.6-1
+Date: 2024-09-16
 Title: Probabilistic Knowledge Structures
 Authors@R: c(person(given = "Florian", family = "Wickelmaier",
                     role = c("aut", "cre"), email = "wickelmaier@web.de"),
@@ -10,7 +10,7 @@ Authors@R: c(person(given = "Florian", family = "Wickelmaier",
              person(given = "Debora", family = "de Chiusole", role = "ctb"),
              person(given = "Andrea", family = "Brancaccio", role = "ctb"),
              person(given = "Luca", family = "Stefanutti", role = "ctb"))
-Depends: R (>= 3.5.0), stats, sets
+Depends: R (>= 4.0.0), stats, sets
 Imports: graphics
 Suggests: relations, Rgraphviz
 Description: Fitting and testing probabilistic knowledge structures,
@@ -19,9 +19,9 @@ Description: Fitting and testing probabilistic knowledge structures,
   maximum likelihood (MDML) method (Heller & Wickelmaier, 2013
   <doi:10.1016/j.endm.2013.05.145>).
 License: GPL (>= 2)
-URL: http://www.mathpsy.uni-tuebingen.de/wickelmaier/
+URL: https://www.mathpsy.uni-tuebingen.de/wickelmaier/
 NeedsCompilation: no
-Packaged: 2023-07-07 10:18:52 UTC; siifw01
+Packaged: 2024-09-16 15:46:11 UTC; siifw01
 Author: Florian Wickelmaier [aut, cre],
   Juergen Heller [aut],
   Julian Mollenhauer [aut],
@@ -31,4 +31,4 @@ Author: Florian Wickelmaier [aut, cre],
   Luca Stefanutti [ctb]
 Maintainer: Florian Wickelmaier <wickelmaier@web.de>
 Repository: CRAN
-Date/Publication: 2023-07-07 12:00:02 UTC
+Date/Publication: 2024-09-16 16:40:02 UTC

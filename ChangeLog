@@ -1,3 +1,7 @@
+Changes in 0.6-1
+
+  * Vignette and schoolarithm.Rd: fix typos
+
 Changes in 0.6-0
 
   * DESCRIPTION: suggests relations and Rgraphviz for plotting knowledge
