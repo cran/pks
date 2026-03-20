@@ -30,6 +30,7 @@ S3method("residuals", "blim")
 S3method("plot", "blim")
 S3method("print", "blim")
 S3method("simulate", "blim")
+S3method("predict", "blim")
 
 S3method("coef", "slm")
 S3method("print", "slm")

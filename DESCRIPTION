@@ -1,6 +1,6 @@
 Package: pks
-Version: 0.6-1
-Date: 2024-09-16
+Version: 0.7-0
+Date: 2026-03-20
 Title: Probabilistic Knowledge Structures
 Authors@R: c(person(given = "Florian", family = "Wickelmaier",
                     role = c("aut", "cre"), email = "wickelmaier@web.de"),
@@ -9,8 +9,9 @@ Authors@R: c(person(given = "Florian", family = "Wickelmaier",
              person(given = "Pasquale", family = "Anselmi", role = "ctb"),
              person(given = "Debora", family = "de Chiusole", role = "ctb"),
              person(given = "Andrea", family = "Brancaccio", role = "ctb"),
-             person(given = "Luca", family = "Stefanutti", role = "ctb"))
-Depends: R (>= 4.0.0), stats, sets
+             person(given = "Luca", family = "Stefanutti", role = "ctb"),
+             person(given = "Paul", family = "Doerrbecker", role = "ctb"))
+Depends: R (>= 4.1.0), stats, sets
 Imports: graphics
 Suggests: relations, Rgraphviz
 Description: Fitting and testing probabilistic knowledge structures,
@@ -21,14 +22,15 @@ Description: Fitting and testing probabilistic knowledge structures,
 License: GPL (>= 2)
 URL: https://www.mathpsy.uni-tuebingen.de/wickelmaier/
 NeedsCompilation: no
-Packaged: 2024-09-16 15:46:11 UTC; siifw01
+Packaged: 2026-03-20 16:40:50 UTC; siifw01
 Author: Florian Wickelmaier [aut, cre],
   Juergen Heller [aut],
   Julian Mollenhauer [aut],
   Pasquale Anselmi [ctb],
   Debora de Chiusole [ctb],
   Andrea Brancaccio [ctb],
-  Luca Stefanutti [ctb]
+  Luca Stefanutti [ctb],
+  Paul Doerrbecker [ctb]
 Maintainer: Florian Wickelmaier <wickelmaier@web.de>
 Repository: CRAN
-Date/Publication: 2024-09-16 16:40:02 UTC
+Date/Publication: 2026-03-20 22:10:02 UTC

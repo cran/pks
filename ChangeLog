@@ -1,3 +1,13 @@
+Changes in 0.7-0
+
+  * BUG FIX: as.pattern(R, useNames = TRUE) works better when R consists of
+    all-zero rows; warns when as.set = TRUE but R contains duplicated rows
+  * New function: predict.blim(), predict a knowledge state or state
+    probabilities given a response pattern; works for class slm by inheritance
+    (prompted by Paul Doerrbecker)
+  * blim(): more modularization and vectorization and fewer calls to apply()
+  * New data set: hsgeometry (Lakshminarayan, 1995, 1996)
+
 Changes in 0.6-1
 
   * Vignette and schoolarithm.Rd: fix typos

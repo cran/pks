@@ -27,7 +27,7 @@ is.subset(R)
     returned.}
   \item{useNames}{logical, return response patterns as combinations of
     item names.}
-  \item{as.set}{logical, return response patterns as set of sets.}
+  \item{as.set}{logical, return knowledge states as set of sets.}
   \item{sep}{character to separate the item names.}
   \item{emptyset}{string representing the empty set if \code{useNames}
     is \code{TRUE}.}

@@ -45,29 +45,22 @@ slm <- function(K, N.R, method = c("MD", "ML", "MDML"), R = as.binmat(N.R),
     } else colnames(K)
   dimnames(betaeq) <- dimnames(etaeq) <- list(names(eta), names(eta))
 
-  ## Assigning state K given response R
-  if(length(which(c(betafix, etafix) == 0))) {
-    d.RK <- apply(K, 1, function(k) {
-      RwoK <- t(R) & !k
-      idx <- which(RwoK, arr.ind=TRUE)
-      RwoK[idx[idx[, "row"] %in% which(etafix == 0), ]] <- NA
-      
-      KwoR <- k & !t(R)
-      idx <- which(KwoR, arr.ind=TRUE)
-      KwoR[idx[idx[, "row"] %in% which(betafix == 0), ]] <- NA
-      colSums(RwoK) + colSums(KwoR)
-    })
-    PRKfun <- getPRK[["apply"]] 
-  } else {
-    d.RK <- apply(K, 1, function(k) colSums(xor(t(R), k)))
-    PRKfun <- getPRK[["matmult"]] 
-  }
-  d.min <- apply(d.RK, 1, min, na.rm = TRUE)             # minimum discrepancy
-  i.RK  <- (d.RK <= (d.min + incradius)) & !is.na(d.RK)
+  ## Assign state K given response R
+  MDout <- getMD(K = K, R = R, betafix = betafix, etafix = etafix,
+                 incradius = incradius)
+  d.min <- MDout[["d.min"]]
+  i.RK  <- MDout[["i.RK"]]
 
   ## Minimum discrepancy distribution
   disc.tab <- xtabs(N.R ~ d.min)
   disc     <- as.numeric(names(disc.tab)) %*% disc.tab / N
+
+  ## Select P(R|K) algorithm
+  PRKfun <-
+    if(length(which(c(betafix, etafix) == 0)))
+      getPRK[["apply"]]
+    else
+      getPRK[["matmult"]]
 
   ## Call EM
   method <- match.arg(method)
@@ -123,7 +116,8 @@ slm <- function(K, N.R, method = c("MD", "ML", "MDML"), R = as.binmat(N.R),
     disc.tab=disc.tab, K=K, N.R=N.R, nitems=nitems, nstates=nstates,
     npatterns=npat, ntotal=N, nerror=nerror, npar=npar,
     method=method, iter=iter, loglik=loglik, fitted.values=fitted,
-    goodness.of.fit=gof)
+    goodness.of.fit=gof, incradius=incradius, betafix=betafix,
+    etafix=etafix)
   class(z) <- c("slm", "blim")
   z
 }

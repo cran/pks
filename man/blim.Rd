@@ -35,7 +35,7 @@ blimMD(K, N.R, R = as.binmat(N.R),
   \item{method}{\code{MD} for minimum discrepancy estimation, \code{ML} for
     maximum likelihood estimation, \code{MDML} for minimum discrepancy
     maximum likelihood estimation.}
-  \item{R}{a person-by-problem indicator matrix of unique response patterns.
+  \item{R}{a pattern-by-problem indicator matrix of unique response patterns.
     Per default inferred from the names of \code{N.R}.}
   \item{P.K}{the vector of initial parameter values for probabilities of
     knowledge states.}
@@ -118,6 +118,7 @@ blimMD(K, N.R, R = as.binmat(N.R),
     likelihood ratio fitted vs. saturated model (G2), the degrees of
     freedom, and the p-value of the corresponding chi-square distribution.
     (See Details.)}
+  \item{incradius, betafix, etafix}{See Arguments.}
 }
 
 \references{
@@ -143,7 +144,7 @@ blimMD(K, N.R, R = as.binmat(N.R),
   \code{\link{simulate.blim}}, \code{\link{plot.blim}},
   \code{\link{residuals.blim}}, \code{\link{logLik.blim}},
   \code{\link{delineate}}, \code{\link{jacobian}}, \code{\link{endm}},
-  \code{\link{probability}}, \code{\link{chess}}.
+  \code{\link{probability}}, \code{\link{chess}}, \code{\link{predict.blim}}.
 }
 
 \examples{

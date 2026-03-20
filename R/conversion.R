@@ -1,6 +1,7 @@
 # Mar/30/2022 as.binmat() gains as.logical arg
 # Jun/02/2023 useNames argument for as.pattern()
 # Jun/06/2023 is.subset()
+# Jan/05/2026 fix as.pattern(cbind(0, 0, 0), useNames = TRUE)
 
 
 ## Subset relation incidence matrix
@@ -30,9 +31,10 @@ as.pattern <- function(R, freq = FALSE, useNames = FALSE, as.set = FALSE,
           c("a", letters[(seq_len(nitems) %% 26) + 1])[-(nitems + 1)],
           sep = ""
         )
-      lett <- unname(apply(R == TRUE, 1, function(r) item.names[r]))
-
+      lett <- unname(apply(R == TRUE, 1, function(r) item.names[r],
+                           simplify = FALSE))
       if(as.set) {
+        if(anyDuplicated(lett)) warning("duplicated elements removed")
         as.set(sapply(lett, as.set))  # return family of sets, class set
       } else {
         lett <- sapply(lett, paste, collapse = sep)

@@ -32,7 +32,7 @@ getSlmPK(g, K, Ko)
   \item{method}{\code{MD} for minimum discrepancy estimation, \code{ML} for
     maximum likelihood estimation, \code{MDML} for minimum discrepancy
     maximum likelihood estimation.}
-  \item{R}{a person-by-problem indicator matrix of unique response patterns.
+  \item{R}{a pattern-by-problem indicator matrix of unique response patterns.
     Per default inferred from the names of \code{N.R}.}
   \item{beta, eta, g}{vectors of initial values for the error, guessing, and
     solvability parameters.}

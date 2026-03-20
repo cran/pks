@@ -2,8 +2,8 @@
 \alias{endm}
 \title{Responses and Knowledge Structures from Heller and Wickelmaier (2013)}
 \description{
-  Knowledge structures and 200 artificial responses to four problems are used
-  to illustrate parameter estimation in Heller and Wickelmaier (2013).
+  Knowledge structures and 200 artificial responses to four problems that are
+  used to illustrate parameter estimation in Heller and Wickelmaier (2013).
 }
 \usage{data(endm)}
 \format{
